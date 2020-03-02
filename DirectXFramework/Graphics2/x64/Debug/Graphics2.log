@@ -1,2 +1,8 @@
-﻿  SceneGraph.cpp
-  Graphics2.vcxproj -> U:\Year 2\Graphics II\Week 3\DirectXFramework\x64\Debug\Graphics2.exe
+﻿  Cube.cpp
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(4,1): error C2512:  'SceneNode': no appropriate default constructor available
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\SceneNode.h(14,7): message :  see declaration of 'SceneNode'
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(24,2): error C3861:  'BuildGeometryBuffers': identifier not found
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(25,2): error C3861:  'BuildShaders': identifier not found
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(26,2): error C3861:  'BuildVertexLayout': identifier not found
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(27,2): error C3861:  'BuildConstantBuffer': identifier not found
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(28,2): error C3861:  'BuildTexture': identifier not found
