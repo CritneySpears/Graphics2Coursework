@@ -1,8 +1,18 @@
 ﻿  Cube.cpp
-U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(4,1): error C2512:  'SceneNode': no appropriate default constructor available
-U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\SceneNode.h(14,7): message :  see declaration of 'SceneNode'
-U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(24,2): error C3861:  'BuildGeometryBuffers': identifier not found
-U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(25,2): error C3861:  'BuildShaders': identifier not found
-U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(26,2): error C3861:  'BuildVertexLayout': identifier not found
-U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(27,2): error C3861:  'BuildConstantBuffer': identifier not found
-U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Cube.cpp(28,2): error C3861:  'BuildTexture': identifier not found
+  Graphics2.cpp
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1555): error C2259:  'Cube': cannot instantiate abstract class
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1555): message :  due to following members:
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1555): message :  'void SceneNode::Shutdown(void)': is abstract
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\SceneNode.h(24): message :  see declaration of 'SceneNode::Shutdown'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :  see reference to function template instantiation 'std::_Ref_count_obj<_Ty>::_Ref_count_obj<const wchar_t(&)[5],wchar_t*&>(const wchar_t (&)[5],wchar_t *&)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :         with
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :         [
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :             _Ty=Cube
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :         ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :  see reference to function template instantiation 'std::_Ref_count_obj<_Ty>::_Ref_count_obj<const wchar_t(&)[5],wchar_t*&>(const wchar_t (&)[5],wchar_t *&)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :         with
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :         [
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :             _Ty=Cube
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.22.27905\include\memory(1608): message :         ]
+  Generating Code...
+U:\Year 2\Graphics II\Github Repo\Graphics2Coursework\DirectXFramework\Graphics2\Graphics2.cpp(12): message :  see reference to function template instantiation 'std::shared_ptr<Cube> std::make_shared<Cube,const wchar_t(&)[5],wchar_t*&>(const wchar_t (&)[5],wchar_t *&)' being compiled

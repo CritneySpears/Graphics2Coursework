@@ -22,8 +22,8 @@ DirectXFramework::DirectXFramework(unsigned int width, unsigned int height) : Fr
 
 	// Initialise vectors used to create camera.  We will move these
 	// to a separate Camera class later
-	_eyePosition = XMFLOAT4(0.0f, 1.0f, -15.0f, 0.0f);
-	_focalPointPosition = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	_eyePosition = XMFLOAT4(0.0f, 20.0f, -90.0f, 0.0f);
+	_focalPointPosition = XMFLOAT4(0.0f, 20.0f, 0.0f, 0.0f);
 	_upVector = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 }
 

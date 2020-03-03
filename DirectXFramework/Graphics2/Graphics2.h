@@ -7,5 +7,7 @@ public:
 	void CreateSceneGraph();
 	void UpdateSceneGraph();
 
+private:
+	wchar_t* _sampleTexture = L"Wood.png";
 };
 
