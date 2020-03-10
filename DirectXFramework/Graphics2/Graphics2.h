@@ -8,6 +8,9 @@ public:
 	void UpdateSceneGraph();
 
 private:
-	wchar_t* _sampleTexture = L"Wood.png";
+	wchar_t* _woodTexture = L"Wood.png";
+	wchar_t* _concreteTexture = L"Concrete.png";
+	wchar_t* _brickTexture = L"Bricks.png";
+	wchar_t* _woodBoxTexture = L"Woodbox.bmp";
 };
 

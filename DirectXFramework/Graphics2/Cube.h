@@ -8,10 +8,14 @@ class Cube : public SceneNode
 {
 public:
 
-	Cube(wstring name, wchar_t* textureName);
+	Cube::Cube(wstring name, wchar_t* texturePath) : SceneNode(name)
+	{
+		_texturePath = texturePath;
+	}
 
 	virtual bool Initialise();
 	virtual void Render();
+	virtual void Shutdown();
 
 private:
 
@@ -28,11 +32,10 @@ private:
 	ComPtr<ID3D11InputLayout>			_layout;
 	ComPtr<ID3D11Buffer>				_constantBuffer;
 
-	D3D11_VIEWPORT					_screenViewport;
 
 	ComPtr<ID3D11ShaderResourceView>	_texture;
-	wchar_t*							_textureName;
-	wstring								_name;
+	wchar_t*							_texturePath;
+
 
 	void BuildGeometryBuffers();
 	void BuildShaders();

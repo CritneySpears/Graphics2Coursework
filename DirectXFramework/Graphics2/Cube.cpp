@@ -16,21 +16,8 @@ struct CBUFFER
 	XMFLOAT4    AmbientColour;
 };
 
-Cube::Cube(wstring name, wchar_t* textureName) : SceneNode(name)
-{
-	_name = name;
-	_textureName = textureName;
-}
-
 bool Cube::Initialise()
 {
-	// Access current instance of DirectFramework.
-	DirectXFramework::GetDXFramework();
-	//Access device and device context information.
-	ComPtr<ID3D11Device> device = 
-		DirectXFramework::GetDXFramework()->GetDevice(); //returns ComPtrs to appropriate interface.
-	ComPtr<ID3D11DeviceContext> deviceContext = 
-		DirectXFramework::GetDXFramework()->GetDeviceContext();
 	BuildGeometryBuffers();
 	BuildShaders();
 	BuildVertexLayout();
@@ -42,7 +29,6 @@ bool Cube::Initialise()
 
 void Cube::Render()
 {
-	DirectXFramework::GetDXFramework();
 	// Calculate the world x view x projection transformation
 	XMMATRIX completeTransformation = XMLoadFloat4x4(&_combinedWorldTransformation) * DirectXFramework::GetDXFramework()->GetViewTransformation() * DirectXFramework::GetDXFramework()->GetProjectionTransformation();
 	// Draw the first cube
@@ -67,6 +53,10 @@ void Cube::Render()
 	_deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	_deviceContext->DrawIndexed(36, 0, 0);
+}
+
+void Cube::Shutdown()
+{
 }
 
 void Cube::BuildGeometryBuffers()
@@ -238,7 +228,7 @@ void Cube::BuildTexture()
 	// the following call will throw an exception
 	ThrowIfFailed(CreateWICTextureFromFile(_device.Get(),
 		_deviceContext.Get(),
-		_textureName,
+		_texturePath,
 		nullptr,
 		_texture.GetAddressOf()
 	));
