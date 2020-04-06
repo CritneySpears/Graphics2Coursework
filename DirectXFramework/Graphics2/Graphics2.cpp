@@ -21,15 +21,15 @@ void Graphics2::CreateSceneGraph()
 	rightLeg->SetWorldTransform(XMMatrixScaling(1, 7.5, 1) * XMMatrixTranslation(4, 7.5, 0));
 	sceneGraph->Add(rightLeg);
 
-	SceneNodePointer head = make_shared<Cube>(L"Head", _concreteTexture);
+	SceneNodePointer head = make_shared<Cube>(L"Head", _woodBoxTexture);
 	head->SetWorldTransform(XMMatrixScaling(3, 3, 3) * XMMatrixTranslation(0, 34, 0));
 	sceneGraph->Add(head);
 
-	SceneNodePointer leftArm = make_shared<Cube>(L"Left Arm", _concreteTexture);
+	SceneNodePointer leftArm = make_shared<Cube>(L"Left Arm", _brickTexture);
 	leftArm->SetWorldTransform(XMMatrixScaling(1, 8.5, 1) * XMMatrixTranslation(-6, 22, 0));
 	sceneGraph->Add(leftArm);
 
-	SceneNodePointer rightArm = make_shared<Cube>(L"right Arm", _concreteTexture);
+	SceneNodePointer rightArm = make_shared<Cube>(L"right Arm", _brickTexture);
 	rightArm->SetWorldTransform(XMMatrixScaling(1, 8.5, 1) * XMMatrixTranslation(6, 22, 0));
 	sceneGraph->Add(rightArm);
 }
@@ -42,5 +42,5 @@ void Graphics2::UpdateSceneGraph()
 	// in the scene graph
 
 	SceneNodePointer rightArm = sceneGraph->Find(L"rightArm");
-	//rightArm->
+
 }
