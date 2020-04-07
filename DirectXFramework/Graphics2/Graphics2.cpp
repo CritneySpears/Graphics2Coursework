@@ -8,7 +8,7 @@ void Graphics2::CreateSceneGraph()
 	SceneGraphPointer sceneGraph = GetSceneGraph();
 
 	shared_ptr<MeshNode> node = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
-	node->SetWorldTransform(XMMatrixScaling(1, 1, 1) * XMMatrixTranslation(0, 0, 0) * XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
+	node->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
 	sceneGraph->Add(node);
 	
 	// This is where you add nodes to the scene graph
@@ -41,9 +41,11 @@ void Graphics2::CreateSceneGraph()
 void Graphics2::UpdateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
+	SceneNodePointer nodeLocal = sceneGraph->Find(L"Plane1");
 
-	SceneNodePointer node = sceneGraph->Find(L"node");
-	//node->Update(XMMatrixTranslation(1, 0, 0));
+	_circleAngle += 1.0f;
+
+	nodeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 50.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), -_circleAngle * XM_PI / 180.0f));
 	
 	// This is where you make any changes to the local world transformations to nodes
 	// in the scene graph
