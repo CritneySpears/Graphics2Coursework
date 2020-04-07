@@ -3,6 +3,8 @@
 #include "Framework.h"
 #include "DirectXCore.h"
 #include "SceneGraph.h"
+#include "ResourceManager.h"
+#include "MeshNode.h"
 
 class DirectXFramework : public Framework
 {
@@ -24,6 +26,7 @@ public:
 	inline SceneGraphPointer			GetSceneGraph() { return _sceneGraph; }
 	inline ComPtr<ID3D11Device>			GetDevice() { return _device; }
 	inline ComPtr<ID3D11DeviceContext>	GetDeviceContext() { return _deviceContext; }
+	inline shared_ptr<ResourceManager>	GetResourceManager() { return _resourceManager; }
 
 	XMMATRIX							GetViewTransformation();
 	XMMATRIX							GetProjectionTransformation();
@@ -37,6 +40,7 @@ private:
 	ComPtr<ID3D11Texture2D>				_depthStencilBuffer;
 	ComPtr<ID3D11RenderTargetView>		_renderTargetView;
 	ComPtr<ID3D11DepthStencilView>		_depthStencilView;
+	shared_ptr<ResourceManager>			_resourceManager;
 
 	D3D11_VIEWPORT						_screenViewport;
 

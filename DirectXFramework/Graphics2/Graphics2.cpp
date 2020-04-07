@@ -6,10 +6,14 @@ Graphics2 app;
 void Graphics2::CreateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
+
+	shared_ptr<MeshNode> node = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
+	node->SetWorldTransform(XMMatrixScaling(1, 1, 1) * XMMatrixTranslation(0, 0, 0) * XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
+	sceneGraph->Add(node);
 	
 	// This is where you add nodes to the scene graph
 
-	SceneNodePointer body = make_shared<Cube>(L"Body", _woodTexture);
+	/*SceneNodePointer body = make_shared<Cube>(L"Body", _woodTexture);
 	body->SetWorldTransform(XMMatrixScaling(5, 8, 2.5) * XMMatrixTranslation(0, 23, 0));
 	sceneGraph->Add(body);
 
@@ -31,16 +35,17 @@ void Graphics2::CreateSceneGraph()
 
 	SceneNodePointer rightArm = make_shared<Cube>(L"right Arm", _brickTexture);
 	rightArm->SetWorldTransform(XMMatrixScaling(1, 8.5, 1) * XMMatrixTranslation(6, 22, 0));
-	sceneGraph->Add(rightArm);
+	sceneGraph->Add(rightArm);*/
 }
 
 void Graphics2::UpdateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
 
+	SceneNodePointer node = sceneGraph->Find(L"node");
+	//node->Update(XMMatrixTranslation(1, 0, 0));
+	
 	// This is where you make any changes to the local world transformations to nodes
 	// in the scene graph
-
-	SceneNodePointer rightArm = sceneGraph->Find(L"rightArm");
 
 }

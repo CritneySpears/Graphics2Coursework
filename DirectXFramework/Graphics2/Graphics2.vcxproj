@@ -75,6 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>E:\University\Graphics II\Graphics2Coursework\DirectXFramework\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -107,6 +108,13 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(ProjectDir)*.dll" "$(SolutionDir)$(Platform)\$(Configuration)"
+copy /Y "$(ProjectDir)white.png" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Ensure Files are Copied to the right place on build.</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -150,7 +158,12 @@
     <ClInclude Include="DirectXFramework.h" />
     <ClInclude Include="Graphics2.h" />
     <ClInclude Include="HelperFunctions.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshNode.h" />
+    <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SceneGraph.h" />
     <ClInclude Include="SceneNode.h" />
     <ClInclude Include="targetver.h" />
@@ -162,12 +175,17 @@
   <ItemGroup>
     <Image Include="Graphics2.ico" />
     <Image Include="small.ico" />
+    <Image Include="white.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="DirectXFramework.cpp" />
     <ClCompile Include="Graphics2.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshNode.cpp" />
+    <ClCompile Include="MeshRenderer.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneGraph.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
   </ItemGroup>

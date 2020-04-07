@@ -22,7 +22,7 @@ DirectXFramework::DirectXFramework(unsigned int width, unsigned int height) : Fr
 
 	// Initialise vectors used to create camera.  We will move these
 	// to a separate Camera class later
-	_eyePosition = XMFLOAT4(0.0f, 20.0f, -90.0f, 0.0f);
+	_eyePosition = XMFLOAT4(-20.0f, 20.0f, -60.0f, 0.0f);
 	_focalPointPosition = XMFLOAT4(0.0f, 20.0f, 0.0f, 0.0f);
 	_upVector = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 }
@@ -76,6 +76,7 @@ bool DirectXFramework::Initialise()
 	// Create camera and projection matrices (we will look at how the 
 	// camera matrix is created from vectors later)
 	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)GetWindowWidth() / GetWindowHeight(), 1.0f, 10000.0f));
+	_resourceManager = make_shared<ResourceManager>();
 	_sceneGraph = make_shared<SceneGraph>();
 	CreateSceneGraph();
 	return _sceneGraph->Initialise();
