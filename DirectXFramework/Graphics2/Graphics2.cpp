@@ -1,5 +1,6 @@
 #include "Graphics2.h"
 #include "Cube.h"
+#include "TerrainNode.h"
 
 Graphics2 app;
 
@@ -10,6 +11,9 @@ void Graphics2::CreateSceneGraph()
 	shared_ptr<MeshNode> node = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
 	node->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
 	sceneGraph->Add(node);
+
+	shared_ptr<TerrainNode> terrain = make_shared<TerrainNode>(L"SampleTerrain", L"SampleTerrain");
+	sceneGraph->Add(terrain);
 	
 	// This is where you add nodes to the scene graph
 

@@ -44,7 +44,7 @@ PixelShaderInput VShader(VertexShaderInput vin)
 
 float4 PShader(PixelShaderInput input) : SV_TARGET
 {
-	float4 viewDirection = normalize(cameraPosition - input.PositionWS);
+	/*float4 viewDirection = normalize(cameraPosition - input.PositionWS);
 	float4 directionToLight = normalize(-lightVector);
 
 	// Calculate diffuse lighting
@@ -65,6 +65,8 @@ float4 PShader(PixelShaderInput input) : SV_TARGET
 	if (opacity < 1.0f)
 	{
 		color.a = opacity;
-	}
-	return color;
+	}*/
+
+	float4 colour = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	return colour;
 }
