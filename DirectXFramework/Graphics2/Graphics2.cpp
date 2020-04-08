@@ -45,7 +45,7 @@ void Graphics2::UpdateSceneGraph()
 
 	_circleAngle += 1.0f;
 
-	nodeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 50.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), -_circleAngle * XM_PI / 180.0f));
+	nodeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 100.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.2f, 0.0f), -_circleAngle * XM_PI / 180.0f));
 	
 	// This is where you make any changes to the local world transformations to nodes
 	// in the scene graph
