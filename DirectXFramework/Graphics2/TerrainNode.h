@@ -38,6 +38,7 @@ private:
 
 	unsigned int						_numberOfXPoints = 1024;
 	unsigned int						_numberOfZPoints = 1024;
+	unsigned int						_TerrainCellSize = 10;
 
 	//bool LoadHeightMap(wstring heightMapFilename);
 	void BuildRendererStates();

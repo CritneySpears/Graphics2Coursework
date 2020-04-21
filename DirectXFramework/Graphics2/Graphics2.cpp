@@ -13,6 +13,7 @@ void Graphics2::CreateSceneGraph()
 	sceneGraph->Add(node);
 
 	shared_ptr<TerrainNode> terrain = make_shared<TerrainNode>(L"SampleTerrain", L"SampleTerrain");
+	terrain->SetWorldTransform(XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(0, 0, 0));
 	sceneGraph->Add(terrain);
 	
 	// This is where you add nodes to the scene graph

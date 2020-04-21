@@ -34,9 +34,9 @@ void TerrainNode::Render()
 {
 	CBUFFER cBuffer;
 	cBuffer.WorldTransformation = XMLoadFloat4x4(&_combinedWorldTransformation);
-	//cBuffer.AmbientColour = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	//cBuffer.LightVector = XMVector4Normalize(XMVectorSet(0.0f, 01.0f, 1.0f, 0.0f));
-	//cBuffer.LightColour = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	cBuffer.AmbientColor = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	cBuffer.LightVector = XMVector4Normalize(XMVectorSet(0.0f, 01.0f, 1.0f, 0.0f));
+	cBuffer.LightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Update the constant buffer 
 	_deviceContext->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
@@ -62,32 +62,35 @@ void TerrainNode::GenerateVerticesIndices()
 {
 	// Fill a 1024 x 1024 grid with vertices. Then create the indices for the terrain polygons.
 
-	for (int x = -5120; x < 5110; x+= 10)
+	for (int z = 5110; z > -5120; z -= _TerrainCellSize)
 	{
-		for (int z = -5120; z < 5110; z+=10)
+		for (int x = -5120; x < 5110; x += _TerrainCellSize)
 		{
+			float y = 0.0f;
 			VERTEX * currentVertex = new VERTEX;
-			currentVertex->Position =	XMFLOAT3((float)x, 0.0f, (float)z);
+			currentVertex->Position =	XMFLOAT3((float)x, y, (float)z);
 			currentVertex->Normal =		XMFLOAT3(0.0f, 0.0f, 0.0f);
 			currentVertex->TexCoord =	XMFLOAT2(0.0f, 0.0f);
-
+			
 			_vertices.push_back(*currentVertex);
 		}
 	}
-
-	for (int x = 0; x <= 1023; x+=3)
+	for (int cellZ = 1; cellZ <= (_numberOfZPoints - 1); cellZ++)
 	{
-		// Indices for triangle 1
+		for (int cellX = 1; cellX <= (_numberOfXPoints - 1); cellX++)
+		{
+			// Indices for triangle 1
 
-		_indices.push_back(x);
-		_indices.push_back(x + 1);
-		_indices.push_back(x + 2);
+			_indices.push_back(cellX + (cellZ * (_numberOfXPoints - 1)));
+			_indices.push_back(cellX + 1 + (cellZ * (_numberOfXPoints - 1)));
+			_indices.push_back(cellX + ((cellZ + 1) * (_numberOfXPoints - 1)));
 
-		//Indices for triangle 2
+			//Indices for triangle 2
 
-		_indices.push_back(x + 2);
-		_indices.push_back(x + 1);
-		_indices.push_back(x + 3);
+			_indices.push_back(cellX + ((cellZ + 1) * (_numberOfXPoints - 1)));
+			_indices.push_back(cellX + 1 + (cellZ * (_numberOfXPoints - 1)));
+			_indices.push_back(cellX + 1 + ((cellZ + 1) * (_numberOfXPoints - 1)));
+		}
 	}
 }
 
