@@ -15,6 +15,10 @@ void Graphics2::CreateSceneGraph()
 	shared_ptr<TerrainNode> terrain = make_shared<TerrainNode>(L"SampleTerrain", L"SampleTerrain");
 	terrain->SetWorldTransform(XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(0, 0, 0));
 	sceneGraph->Add(terrain);
+
+	SceneNodePointer cube = make_shared<Cube>(L"Cube", _woodTexture);
+	cube->SetWorldTransform(XMMatrixScaling(10, 10, 10) * XMMatrixTranslation(0, 20, 0));
+	sceneGraph->Add(cube);
 	
 	// This is where you add nodes to the scene graph
 

@@ -42,8 +42,8 @@ private:
 
 	//bool LoadHeightMap(wstring heightMapFilename);
 	void BuildRendererStates();
-	void GenerateVerticesIndices();
-	void CreateVertexIndexBuffers();
+	void GenerateGeometry();
+	void CreateGeometryBuffers();
 	void BuildShaders();
 	void BuildVertexLayout();
 	void BuildConstantBuffer();

@@ -1,7 +1,5 @@
 ﻿  Graphics2.cpp
   TerrainNode.cpp
-E:\University\Graphics II\Graphics2Coursework\DirectXFramework\Graphics2\TerrainNode.cpp(78,28): warning C4018: '<=': signed/unsigned mismatch
-E:\University\Graphics II\Graphics2Coursework\DirectXFramework\Graphics2\TerrainNode.cpp(80,29): warning C4018: '<=': signed/unsigned mismatch
   Generating Code...
   Graphics2.vcxproj -> E:\University\Graphics II\Graphics2Coursework\DirectXFramework\x64\Debug\Graphics2.exe
   Ensure Files are Copied to the right place on build.

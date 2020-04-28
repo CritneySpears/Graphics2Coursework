@@ -22,11 +22,12 @@ bool TerrainNode::Initialise()
 	//Generate Vertices and Indices for polygons in the terrain grid.
 	//Generate Normals for Polygons.
 	//Create vertex and Index buffers for terran polygons.
-	GenerateVerticesIndices();
-	CreateVertexIndexBuffers();
+	GenerateGeometry();
+	CreateGeometryBuffers();
 	BuildShaders();
 	BuildVertexLayout();
 	BuildConstantBuffer();
+	BuildRendererStates();
 	return true;
 }
 
@@ -44,13 +45,13 @@ void TerrainNode::Render()
 	_deviceContext->VSSetShader(_vertexShader.Get(), 0, 0);
 	_deviceContext->PSSetShader(_pixelShader.Get(), 0, 0);
 	_deviceContext->IASetInputLayout(_layout.Get());
-	_deviceContext->RSSetState(_wireframeRasteriserState.Get());
 	// Update the constant buffer
 	UINT stride = sizeof(VERTEX);
 	UINT offset = 0;
 	_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
 	_deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	_deviceContext->RSSetState(_wireframeRasteriserState.Get());
 	_deviceContext->DrawIndexed((UINT)_indices.size(), 0, 0);
 }
 
@@ -58,10 +59,40 @@ void TerrainNode::Shutdown()
 {
 }
 
-void TerrainNode::GenerateVerticesIndices()
+void TerrainNode::GenerateGeometry()
 {
 	// Fill a 1024 x 1024 grid with vertices. Then create the indices for the terrain polygons.
 
+	/*
+	VERTEX * v1 = new VERTEX;
+	VERTEX * v2 = new VERTEX;
+	VERTEX * v3 = new VERTEX;
+	v1->Position = XMFLOAT3(-100.0f, -100.0f, 100.0f);
+	v2->Position = XMFLOAT3(100.0f, -100.0f, 100.0f);
+	v3->Position = XMFLOAT3(-100.0f, -100.0f, 100.0f);
+
+	v1->Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	v2->Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	v3->Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	v1->TexCoord = XMFLOAT2(0.0f, 0.0f);
+	v2->TexCoord = XMFLOAT2(0.0f, 0.0f);
+	v3->TexCoord = XMFLOAT2(0.0f, 0.0f);
+
+	_vertices.push_back(*v1);
+	_vertices.push_back(*v2);
+	_vertices.push_back(*v3);
+
+	UINT i1 = 1;
+	UINT i2 = 2;
+	UINT i3 = 3;
+
+	_indices.push_back(i1);
+	_indices.push_back(i2);
+	_indices.push_back(i3);
+	*/
+
+	
 	for (int z = 5110; z > -5120; z -= _TerrainCellSize)
 	{
 		for (int x = -5120; x < 5110; x += _TerrainCellSize)
@@ -75,9 +106,9 @@ void TerrainNode::GenerateVerticesIndices()
 			_vertices.push_back(*currentVertex);
 		}
 	}
-	for (int cellZ = 1; cellZ <= (_numberOfZPoints - 1); cellZ++)
+	for (unsigned int cellZ = 1; cellZ <= (_numberOfZPoints - 1); cellZ++)
 	{
-		for (int cellX = 1; cellX <= (_numberOfXPoints - 1); cellX++)
+		for (unsigned int cellX = 1; cellX <= (_numberOfXPoints - 1); cellX++)
 		{
 			// Indices for triangle 1
 
@@ -92,9 +123,10 @@ void TerrainNode::GenerateVerticesIndices()
 			_indices.push_back(cellX + 1 + ((cellZ + 1) * (_numberOfXPoints - 1)));
 		}
 	}
+	
 }
 
-void TerrainNode::CreateVertexIndexBuffers()
+void TerrainNode::CreateGeometryBuffers()
 {
 	// Setup the structure that specifies how big the vertex 
 	// buffer should be
