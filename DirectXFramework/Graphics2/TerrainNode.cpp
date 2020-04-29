@@ -1,6 +1,7 @@
 #include "TerrainNode.h"
 #include "Cube.h"
 #include <vector>
+#include <fstream>
 
 struct CBUFFER
 {
@@ -17,6 +18,7 @@ bool TerrainNode::Initialise()
 	//Generate Vertices and Indices for polygons in the terrain grid.
 	//Generate Normals for Polygons.
 	//Create vertex and Index buffers for terrain polygons.
+	LoadHeightMap(_terrainName);
 	GenerateGeometry();
 	CreateGeometryBuffers();
 	BuildShaders();
@@ -61,46 +63,21 @@ void TerrainNode::GenerateGeometry()
 {
 	// Fill a 1024 x 1024 grid with vertices. Then create the indices for the terrain polygons.
 
-	/*
-	VERTEX * v1 = new VERTEX;
-	VERTEX * v2 = new VERTEX;
-	VERTEX * v3 = new VERTEX;
-	v1->Position = XMFLOAT3(-100.0f, -100.0f, 100.0f);
-	v2->Position = XMFLOAT3(100.0f, -100.0f, 100.0f);
-	v3->Position = XMFLOAT3(-100.0f, -100.0f, 100.0f);
-
-	v1->Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	v2->Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	v3->Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
-
-	v1->TexCoord = XMFLOAT2(0.0f, 0.0f);
-	v2->TexCoord = XMFLOAT2(0.0f, 0.0f);
-	v3->TexCoord = XMFLOAT2(0.0f, 0.0f);
-
-	_vertices.push_back(*v1);
-	_vertices.push_back(*v2);
-	_vertices.push_back(*v3);
-
-	UINT i1 = 1;
-	UINT i2 = 2;
-	UINT i3 = 3;
-
-	_indices.push_back(i1);
-	_indices.push_back(i2);
-	_indices.push_back(i3);
-	*/
+	int heightValueIndex = 0;
 
 	for (UINT z = 0; z < _numberOfZPoints; z++)
 	{
 		for (UINT x = 0; x < _numberOfXPoints; x++)
 		{
+			float worldHeightValue = 1024.0f;
+			float yValue = _heightValues[heightValueIndex] * worldHeightValue;
 			VERTEX currentVertex;
-			currentVertex.Position = XMFLOAT3((float)x, 0, (float)z);
+			currentVertex.Position = XMFLOAT3((float)x * _terrainCellSize, yValue, (float)z * _terrainCellSize);
 			currentVertex.Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
 			currentVertex.TexCoord = XMFLOAT2(0.0f, 0.0f);
-
+			
 			_vertices.push_back(currentVertex);
-
+			heightValueIndex++;
 		}
 	}
 
@@ -283,7 +260,7 @@ void TerrainNode::BuildConstantBuffer()
 	ThrowIfFailed(_device->CreateBuffer(&bufferDesc, NULL, _constantBuffer.GetAddressOf()));
 }
 
-/*
+
 bool TerrainNode::LoadHeightMap(wstring heightMapFilename)
 {
 	unsigned int mapSize = _numberOfXPoints * _numberOfZPoints;
@@ -307,4 +284,3 @@ bool TerrainNode::LoadHeightMap(wstring heightMapFilename)
 	delete[] rawFileValues;
 	return true;
 }
-*/

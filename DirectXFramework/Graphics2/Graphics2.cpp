@@ -8,8 +8,8 @@ void Graphics2::CreateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
 
-	SceneNodePointer terrain = make_shared<TerrainNode>(L"SampleTerrain", L"SampleTerrain");
-	terrain->SetWorldTransform(XMMatrixTranslation(-512, 0, -512) * XMMatrixScaling(10, 10, 10));
+	SceneNodePointer terrain = make_shared<TerrainNode>(L"SampleTerrain", L"Example_HeightMap.raw");
+	terrain->SetWorldTransform(XMMatrixTranslation(-5120, -1024, -5120) * XMMatrixRotationY(XMConvertToRadians(0)));
 	sceneGraph->Add(terrain);
 
 	SceneNodePointer node = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
@@ -52,7 +52,6 @@ void Graphics2::UpdateSceneGraph()
 	_circleAngle += 1.0f;
 
 	planeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 100.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.2f, 0.0f), -_circleAngle * XM_PI / 180.0f));
-	//terrainLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(0.0f, 0.0f, 0.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.2f, 0.0f), -_circleAngle * XM_PI / 180.0f));
 	// This is where you make any changes to the local world transformations to nodes
 	// in the scene graph
 

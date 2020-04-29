@@ -35,19 +35,20 @@ private:
 	UINT								_numberOfZPoints = 1024;
 	UINT								_vertexCount = _numberOfXPoints * _numberOfZPoints;
 	UINT								_indexCount = (_numberOfXPoints - 1) * (_numberOfZPoints - 1) * 6;
-	UINT								_TerrainCellSize = 10;
+	UINT								_terrainCellSize = 10;
 
 	wstring								_terrainName;
 	std::vector<VERTEX>					_vertices;
 	std::vector<UINT>					_indices;
+	std::vector<float>					_heightValues;
 
 
-	//bool LoadHeightMap(wstring heightMapFilename);
 	void BuildRendererStates();
 	void GenerateGeometry();
 	void CreateGeometryBuffers();
 	void BuildShaders();
 	void BuildVertexLayout();
 	void BuildConstantBuffer();
+	bool LoadHeightMap(wstring heightMapFilename);
 };
 
