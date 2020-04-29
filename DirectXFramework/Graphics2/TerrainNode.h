@@ -1,8 +1,8 @@
 #pragma once
+
 #include "SceneNode.h"
 #include "DirectXFramework.h"
 #include "ResourceManager.h"
-
 
 class TerrainNode : public SceneNode
 {
@@ -31,14 +31,16 @@ private:
 	ComPtr<ID3D11RasterizerState>		_defaultRasteriserState;
 	ComPtr<ID3D11RasterizerState>		_wireframeRasteriserState;
 
+	UINT								_numberOfXPoints = 1024;
+	UINT								_numberOfZPoints = 1024;
+	UINT								_vertexCount = _numberOfXPoints * _numberOfZPoints;
+	UINT								_indexCount = (_numberOfXPoints - 1) * (_numberOfZPoints - 1) * 6;
+	UINT								_TerrainCellSize = 10;
 
 	wstring								_terrainName;
 	std::vector<VERTEX>					_vertices;
-	std::vector<int>					_indices;
+	std::vector<UINT>					_indices;
 
-	unsigned int						_numberOfXPoints = 1024;
-	unsigned int						_numberOfZPoints = 1024;
-	unsigned int						_TerrainCellSize = 10;
 
 	//bool LoadHeightMap(wstring heightMapFilename);
 	void BuildRendererStates();

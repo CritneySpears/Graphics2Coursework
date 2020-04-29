@@ -8,17 +8,13 @@ void Graphics2::CreateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
 
-	shared_ptr<MeshNode> node = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
-	node->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
-	sceneGraph->Add(node);
-
-	shared_ptr<TerrainNode> terrain = make_shared<TerrainNode>(L"SampleTerrain", L"SampleTerrain");
-	terrain->SetWorldTransform(XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(0, 0, 0));
+	SceneNodePointer terrain = make_shared<TerrainNode>(L"SampleTerrain", L"SampleTerrain");
+	terrain->SetWorldTransform(XMMatrixTranslation(-512, 0, -512) * XMMatrixScaling(10, 10, 10));
 	sceneGraph->Add(terrain);
 
-	SceneNodePointer cube = make_shared<Cube>(L"Cube", _woodTexture);
-	cube->SetWorldTransform(XMMatrixScaling(10, 10, 10) * XMMatrixTranslation(0, 20, 0));
-	sceneGraph->Add(cube);
+	SceneNodePointer node = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
+	node->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
+	sceneGraph->Add(node);
 	
 	// This is where you add nodes to the scene graph
 
@@ -50,12 +46,13 @@ void Graphics2::CreateSceneGraph()
 void Graphics2::UpdateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
-	SceneNodePointer nodeLocal = sceneGraph->Find(L"Plane1");
+	SceneNodePointer planeLocal = sceneGraph->Find(L"Plane1");
+	SceneNodePointer terrainLocal = sceneGraph->Find(L"SampleTerrain");
 
 	_circleAngle += 1.0f;
 
-	nodeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 100.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.2f, 0.0f), -_circleAngle * XM_PI / 180.0f));
-	
+	planeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 100.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.2f, 0.0f), -_circleAngle * XM_PI / 180.0f));
+	//terrainLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(0, 0, 0) * XMMatrixTranslation(0.0f, 0.0f, 0.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.2f, 0.0f), -_circleAngle * XM_PI / 180.0f));
 	// This is where you make any changes to the local world transformations to nodes
 	// in the scene graph
 

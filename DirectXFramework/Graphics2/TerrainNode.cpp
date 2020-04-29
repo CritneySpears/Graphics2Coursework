@@ -1,19 +1,14 @@
 #include "TerrainNode.h"
+#include "Cube.h"
 #include <vector>
 
 struct CBUFFER
 {
 	XMMATRIX    CompleteTransformation;
 	XMMATRIX	WorldTransformation;
-	XMFLOAT4	CameraPosition;
 	XMVECTOR    LightVector;
-	XMFLOAT4    LightColor;
-	XMFLOAT4    AmbientColor;
-	XMFLOAT4    DiffuseCoefficient;
-	XMFLOAT4	SpecularCoefficient;
-	float		Shininess;
-	float		Opacity;
-	float       Padding[2];
+	XMFLOAT4    LightColour;
+	XMFLOAT4    AmbientColour;
 };
 
 bool TerrainNode::Initialise()
@@ -21,7 +16,7 @@ bool TerrainNode::Initialise()
 	//Load Height Map.
 	//Generate Vertices and Indices for polygons in the terrain grid.
 	//Generate Normals for Polygons.
-	//Create vertex and Index buffers for terran polygons.
+	//Create vertex and Index buffers for terrain polygons.
 	GenerateGeometry();
 	CreateGeometryBuffers();
 	BuildShaders();
@@ -33,15 +28,18 @@ bool TerrainNode::Initialise()
 
 void TerrainNode::Render()
 {
+	XMMATRIX completeTransformation = XMLoadFloat4x4(&_combinedWorldTransformation) * DirectXFramework::GetDXFramework()->GetViewTransformation() * DirectXFramework::GetDXFramework()->GetProjectionTransformation();
 	CBUFFER cBuffer;
+	cBuffer.CompleteTransformation = completeTransformation;
 	cBuffer.WorldTransformation = XMLoadFloat4x4(&_combinedWorldTransformation);
-	cBuffer.AmbientColor = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	cBuffer.AmbientColour = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
 	cBuffer.LightVector = XMVector4Normalize(XMVectorSet(0.0f, 01.0f, 1.0f, 0.0f));
-	cBuffer.LightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	cBuffer.LightColour = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Update the constant buffer 
 	_deviceContext->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
 	_deviceContext->UpdateSubresource(_constantBuffer.Get(), 0, 0, &cBuffer, 0, 0);
+
 	_deviceContext->VSSetShader(_vertexShader.Get(), 0, 0);
 	_deviceContext->PSSetShader(_pixelShader.Get(), 0, 0);
 	_deviceContext->IASetInputLayout(_layout.Get());
@@ -92,7 +90,42 @@ void TerrainNode::GenerateGeometry()
 	_indices.push_back(i3);
 	*/
 
-	
+	for (UINT z = 0; z < _numberOfZPoints; z++)
+	{
+		for (UINT x = 0; x < _numberOfXPoints; x++)
+		{
+			VERTEX currentVertex;
+			currentVertex.Position = XMFLOAT3((float)x, 0, (float)z);
+			currentVertex.Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
+			currentVertex.TexCoord = XMFLOAT2(0.0f, 0.0f);
+
+			_vertices.push_back(currentVertex);
+
+		}
+	}
+
+	UINT k = 0;
+
+	for (UINT i = 0; i < _indexCount; i += 6)
+	{
+		UINT currentIndices[6] = {};
+		currentIndices[0] = k;
+		currentIndices[1] = k + _numberOfZPoints;
+		currentIndices[2] = k + _numberOfZPoints + 1;
+		currentIndices[3] = k;
+		currentIndices[4] = k + _numberOfZPoints + 1;
+		currentIndices[5] = k + 1;
+
+		k++;
+
+		for each (UINT indices in currentIndices)
+		{
+			_indices.push_back(indices);
+		}
+
+	}
+
+	/*
 	for (int z = 5110; z > -5120; z -= _TerrainCellSize)
 	{
 		for (int x = -5120; x < 5110; x += _TerrainCellSize)
@@ -123,7 +156,7 @@ void TerrainNode::GenerateGeometry()
 			_indices.push_back(cellX + 1 + ((cellZ + 1) * (_numberOfXPoints - 1)));
 		}
 	}
-	
+	*/
 }
 
 void TerrainNode::CreateGeometryBuffers()
@@ -220,16 +253,6 @@ void TerrainNode::BuildVertexLayout()
 	ThrowIfFailed(_device->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), _vertexShaderByteCode->GetBufferPointer(), _vertexShaderByteCode->GetBufferSize(), _layout.GetAddressOf()));
 }
 
-void TerrainNode::BuildConstantBuffer()
-{
-	D3D11_BUFFER_DESC bufferDesc;
-	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = sizeof(CBUFFER);
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	ThrowIfFailed(_device->CreateBuffer(&bufferDesc, NULL, _constantBuffer.GetAddressOf()));
-}
-
 void TerrainNode::BuildRendererStates()
 {
 	// Set default and wireframe rasteriser states
@@ -248,6 +271,18 @@ void TerrainNode::BuildRendererStates()
 	rasteriserDesc.FillMode = D3D11_FILL_WIREFRAME;
 	ThrowIfFailed(_device->CreateRasterizerState(&rasteriserDesc, _wireframeRasteriserState.GetAddressOf()));
 }
+
+void TerrainNode::BuildConstantBuffer()
+{
+	D3D11_BUFFER_DESC bufferDesc;
+	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(CBUFFER);
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	ThrowIfFailed(_device->CreateBuffer(&bufferDesc, NULL, _constantBuffer.GetAddressOf()));
+}
+
 /*
 bool TerrainNode::LoadHeightMap(wstring heightMapFilename)
 {
