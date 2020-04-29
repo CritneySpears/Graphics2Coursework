@@ -102,6 +102,21 @@ void TerrainNode::GenerateGeometry()
 
 	}
 
+	for (UINT z = 0; z < _numberOfZPoints; z++)
+	{
+		for (UINT x = 0; x < _numberOfXPoints; x++)
+		{
+			//Calculate face normal.
+			//Add it to all 4 vertices.
+			//move to next cell.
+		}
+	}
+
+	for each (VERTEX vertex in _vertices)
+	{
+		XMVector3Normalize(vertex.Normal());
+	}
+
 	/*
 	for (int z = 5110; z > -5120; z -= _TerrainCellSize)
 	{
