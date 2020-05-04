@@ -7,6 +7,7 @@ Graphics2 app;
 void Graphics2::CreateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
+	//GetCamera()->SetCameraPosition(0.0f, 50.0f, -500.0f);
 
 	SceneNodePointer terrain = make_shared<TerrainNode>(L"SampleTerrain", L"Example_HeightMap.raw");
 	terrain->SetWorldTransform(XMMatrixTranslation(-5120, -1024, -5120) * XMMatrixRotationY(XMConvertToRadians(0)));

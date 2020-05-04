@@ -5,6 +5,7 @@
 #include "SceneGraph.h"
 #include "ResourceManager.h"
 #include "MeshNode.h"
+#include "Camera.h"
 
 class DirectXFramework : public Framework
 {
@@ -27,8 +28,8 @@ public:
 	inline ComPtr<ID3D11Device>			GetDevice() { return _device; }
 	inline ComPtr<ID3D11DeviceContext>	GetDeviceContext() { return _deviceContext; }
 	inline shared_ptr<ResourceManager>	GetResourceManager() { return _resourceManager; }
+	inline shared_ptr<Camera>			GetCamera() { return _camera; }
 
-	XMMATRIX							GetViewTransformation();
 	XMMATRIX							GetProjectionTransformation();
 
 	void								SetBackgroundColour(XMFLOAT4 backgroundColour);
@@ -41,6 +42,8 @@ private:
 	ComPtr<ID3D11RenderTargetView>		_renderTargetView;
 	ComPtr<ID3D11DepthStencilView>		_depthStencilView;
 	shared_ptr<ResourceManager>			_resourceManager;
+	shared_ptr<Camera>					_camera;
+
 
 	D3D11_VIEWPORT						_screenViewport;
 
@@ -51,11 +54,7 @@ private:
 
 	// For now, we are storing our camera vectors and matrix here.
 	// We will move it to a separate Camera class later
-	XMFLOAT4							_eyePosition;
-	XMFLOAT4							_focalPointPosition;
-	XMFLOAT4							_upVector;
 
-	XMFLOAT4X4							_viewTransformation;
 	XMFLOAT4X4							_projectionTransformation;
 
 	SceneGraphPointer					_sceneGraph;

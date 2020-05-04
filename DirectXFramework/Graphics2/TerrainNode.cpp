@@ -30,7 +30,8 @@ bool TerrainNode::Initialise()
 
 void TerrainNode::Render()
 {
-	XMMATRIX completeTransformation = XMLoadFloat4x4(&_combinedWorldTransformation) * DirectXFramework::GetDXFramework()->GetViewTransformation() * DirectXFramework::GetDXFramework()->GetProjectionTransformation();
+	XMMATRIX viewTransformation = DirectXFramework::GetDXFramework()->GetCamera()->GetViewMatrix();
+	XMMATRIX completeTransformation = XMLoadFloat4x4(&_combinedWorldTransformation) * viewTransformation * DirectXFramework::GetDXFramework()->GetProjectionTransformation();
 	CBUFFER cBuffer;
 	cBuffer.CompleteTransformation = completeTransformation;
 	cBuffer.WorldTransformation = XMLoadFloat4x4(&_combinedWorldTransformation);
