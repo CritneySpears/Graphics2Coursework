@@ -44,7 +44,7 @@ PixelShaderInput VShader(VertexShaderInput vin)
 
 float4 PShader(PixelShaderInput input) : SV_TARGET
 {
-	/*float4 viewDirection = normalize(cameraPosition - input.PositionWS);
+	float4 viewDirection = normalize(cameraPosition - input.PositionWS);
 	float4 directionToLight = normalize(-lightVector);
 
 	// Calculate diffuse lighting
@@ -61,12 +61,12 @@ float4 PShader(PixelShaderInput input) : SV_TARGET
 	float4 ambientLight = ambientColor * diffuseCoefficient;
 
 	// Combine all components
-	float4 color = saturate((ambientLight + diffuse + specular) * Texture.Sample(ss, input.TexCoord));
+	float4 color = saturate(ambientLight + diffuse + specular);// * Texture.Sample(ss, input.TexCoord)); - not sampling texture yet.
 	if (opacity < 1.0f)
 	{
 		color.a = opacity;
-	}*/
+	}
 
-	float4 colour = float4(1.0f, 1.0f, 1.0f, 1.0f);
-	return colour;
+	//float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f); - for wireframe.
+	return color;
 }

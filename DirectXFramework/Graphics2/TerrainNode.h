@@ -40,6 +40,7 @@ private:
 	wstring								_terrainName;
 	std::vector<VERTEX>					_vertices;
 	std::vector<UINT>					_indices;
+	std::vector<XMFLOAT3>				_faceNormals;
 	std::vector<float>					_heightValues;
 
 

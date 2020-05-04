@@ -24,7 +24,7 @@ bool TerrainNode::Initialise()
 	BuildShaders();
 	BuildVertexLayout();
 	BuildConstantBuffer();
-	BuildRendererStates();
+	//BuildRendererStates(); - wireframe.
 	return true;
 }
 
@@ -51,7 +51,7 @@ void TerrainNode::Render()
 	_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
 	_deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	_deviceContext->RSSetState(_wireframeRasteriserState.Get());
+	//_deviceContext->RSSetState(_wireframeRasteriserState.Get()); - wireframe.
 	_deviceContext->DrawIndexed((UINT)_indices.size(), 0, 0);
 }
 
@@ -102,19 +102,115 @@ void TerrainNode::GenerateGeometry()
 
 	}
 
-	for (UINT z = 0; z < _numberOfZPoints; z++)
+	for (UINT z = 0; z < _numberOfZPoints - 1; z++)
 	{
-		for (UINT x = 0; x < _numberOfXPoints; x++)
+		for (UINT x = 0; x < _numberOfXPoints - 1; x++)
 		{
 			//Calculate face normal.
-			//Add it to all 4 vertices.
+			//Add it to a vector.
 			//move to next cell.
+
+			//Get the three indices for the face.
+			UINT index1 = (z * _numberOfZPoints) + x;
+			UINT index2 = (z * _numberOfZPoints) + (x + 1);
+			UINT index3 = ((z + 1) * _numberOfZPoints) + x;
+
+			//Get the three vertices for the face.
+			VERTEX vertex1 = _vertices[index1];
+			VERTEX vertex2 = _vertices[index2];
+			VERTEX vertex3 = _vertices[index3];
+
+			//Calculate the two vectors for the face.
+			XMFLOAT3 vector1;
+			vector1.x = vertex1.Position.x - vertex3.Position.x;
+			vector1.y = vertex1.Position.y - vertex3.Position.y;
+			vector1.z = vertex1.Position.z - vertex3.Position.z;
+
+			XMFLOAT3 vector2;
+			vector2.x = vertex3.Position.x - vertex2.Position.x;
+			vector2.y = vertex3.Position.y - vertex2.Position.y;
+			vector2.z = vertex3.Position.z - vertex2.Position.z;
+
+			//Get the cell number. Not used.
+			UINT cellIndex = (z * (_numberOfZPoints - 1)) + x;
+
+			//Calculate the face normal via cross-product.
+			XMFLOAT3 faceNormal;
+			faceNormal.x = (vector1.y * vector2.z) - (vector1.z * vector2.y);
+			faceNormal.y = (vector1.z * vector2.x) - (vector1.x * vector2.z);
+			faceNormal.z = (vector1.x * vector2.y) - (vector1.y * vector2.x);
+			_faceNormals.push_back(faceNormal);
 		}
 	}
 
-	for each (VERTEX vertex in _vertices)
+	//add adjacent average face normals to vertex normal.
+	for (int z = 0; z < (int)_numberOfZPoints; z++)
 	{
-		XMVector3Normalize(vertex.Normal());
+		for (int x = 0; x < (int)_numberOfXPoints; x++)
+		{
+			//Initialise sum.
+			float sum[3] = { 0.0f, 0.0f, 0.0f };
+
+			//Initialise index.
+			int index = 0;
+
+			//Initialise count.
+			UINT count = 0;
+
+			//Bottom-left face.
+			if (((x - 1) >= 0) && ((z - 1) >= 0))
+			{
+				index = ((z - 1) * ((int)_numberOfZPoints - 1)) + (x - 1);
+				sum[0] += _faceNormals[index].x;
+				sum[1] += _faceNormals[index].y;
+				sum[2] += _faceNormals[index].z;
+				count++;
+			}
+
+			//Bottom-right face.
+			if ((x < ((int)_numberOfXPoints - 1)) && ((z - 1) >= 0))
+			{
+				index = ((z - 1) * ((int)_numberOfZPoints - 1)) + x;
+				sum[0] += _faceNormals[index].x;
+				sum[1] += _faceNormals[index].y;
+				sum[2] += _faceNormals[index].z;
+				count++;
+			}
+
+			//Upper-left face.
+			if (((x - 1) >= 0) && (z < ((int)_numberOfZPoints - 1)))
+			{
+				index = (z * ((int)_numberOfZPoints - 1)) + (x - 1);
+				sum[0] += _faceNormals[index].x;
+				sum[1] += _faceNormals[index].y;
+				sum[2] += _faceNormals[index].z;
+				count++;
+			}
+
+			//Upper-right face.
+			if ((x < ((int)_numberOfXPoints - 1)) && (z < ((int)_numberOfZPoints - 1)))
+			{
+				index = (z * ((int)_numberOfZPoints - 1)) + x;
+				sum[0] += _faceNormals[index].x;
+				sum[1] += _faceNormals[index].y;
+				sum[2] += _faceNormals[index].z;
+				count++;
+			}
+
+			//Take average of faces.
+			sum[0] = (sum[0] / (float)count);
+			sum[1] = (sum[1] / (float)count);
+			sum[2] = (sum[2] / (float)count);
+
+			//Calculate length of normal.
+			float length = sqrt((sum[0] * sum[0]) + (sum[1] * sum[1]) + (sum[2] * sum[2]));
+
+			//Get index to vertex location in vector.
+			index = ((z * (int)_numberOfZPoints) + x);
+
+			//Normalize normal and add it to vertex container.
+			_vertices.at(index).Normal = XMFLOAT3(sum[0] / length, sum[1] / length, sum[2] / length);
+		}
 	}
 
 	/*
