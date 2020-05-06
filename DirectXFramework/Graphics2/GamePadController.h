@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "DirectXCore.h"
+#include "DirectXFramework.h"
 #include <XInput.h>
 #pragma comment(lib, "XInput.lib")
 

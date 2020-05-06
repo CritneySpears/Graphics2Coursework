@@ -15,10 +15,10 @@ DirectXFramework::DirectXFramework(unsigned int width, unsigned int height) : Fr
 	_dxFramework = this;
 
 	// Set default background colour
-	_backgroundColour[0] = 0.2f;
-	_backgroundColour[1] = 0.2f;
-	_backgroundColour[2] = 0.2f;
-	_backgroundColour[3] = 1.0f;
+	_backgroundColour[0] = 01.0f;
+	_backgroundColour[1] = 01.0f;
+	_backgroundColour[2] = 01.0f;
+	_backgroundColour[3] = 01.0f;
 
 	// Initialise vectors used to create camera.  We will move these
 	// to a separate Camera class later
@@ -70,8 +70,8 @@ bool DirectXFramework::Initialise()
 	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)GetWindowWidth() / GetWindowHeight(), 1.0f, 10000.0f));
 	_resourceManager = make_shared<ResourceManager>();
 	_sceneGraph = make_shared<SceneGraph>();
-	CreateSceneGraph();
 	_camera = make_shared<Camera>();
+	CreateSceneGraph();
 	return _sceneGraph->Initialise();
 }
 

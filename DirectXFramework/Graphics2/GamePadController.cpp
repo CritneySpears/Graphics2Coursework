@@ -90,6 +90,10 @@ void GamePadController::ProcessGameController()
 	{
 		// Directional pad right pressed
 	}
+	if (buttons & XINPUT_GAMEPAD_LEFT_THUMB)
+	{
+
+	}
 
 	// Other button mask values that can be used are:
 	//

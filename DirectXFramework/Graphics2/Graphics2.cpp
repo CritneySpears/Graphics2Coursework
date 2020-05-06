@@ -7,7 +7,7 @@ Graphics2 app;
 void Graphics2::CreateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
-	//GetCamera()->SetCameraPosition(0.0f, 50.0f, -500.0f);
+	GetCamera()->SetCameraPosition(0.0f, 50.0f, -500.0f);
 
 	SceneNodePointer terrain = make_shared<TerrainNode>(L"SampleTerrain", L"Example_HeightMap.raw");
 	terrain->SetWorldTransform(XMMatrixTranslation(-5120, -1024, -5120) * XMMatrixRotationY(XMConvertToRadians(0)));
@@ -49,6 +49,7 @@ void Graphics2::UpdateSceneGraph()
 	SceneGraphPointer sceneGraph = GetSceneGraph();
 	SceneNodePointer planeLocal = sceneGraph->Find(L"Plane1");
 	SceneNodePointer terrainLocal = sceneGraph->Find(L"SampleTerrain");
+	_controller.ProcessGameController();
 
 	_circleAngle += 1.0f;
 
@@ -56,4 +57,51 @@ void Graphics2::UpdateSceneGraph()
 	// This is where you make any changes to the local world transformations to nodes
 	// in the scene graph
 
+	// This is where controls for moving the camera are set.
+
+	// Move Forwards with "W"
+	if (GetAsyncKeyState(0x57) < 0)
+	{
+		GetCamera()->SetForwardBack(_movementSpeed);
+	}
+	// Move Backwards with "S"
+	if (GetAsyncKeyState(0x53) < 0)
+	{
+		GetCamera()->SetForwardBack(-_movementSpeed);
+	}
+
+	// Move Left with "A"
+	if (GetAsyncKeyState(0x41) < 0)
+	{
+		GetCamera()->SetLeftRight(-_movementSpeed);
+	}
+	// Move Right with "D"
+	if (GetAsyncKeyState(0x44) < 0)
+	{
+		GetCamera()->SetLeftRight(_movementSpeed);
+	}
+	
+	// Look Left with "LEFT ARROW"
+	if (GetAsyncKeyState(VK_LEFT) < 0)
+	{
+		GetCamera()->SetYaw(-_movementSpeed);
+	}
+	// Look Right with "RIGHT ARROW"
+	if (GetAsyncKeyState(VK_RIGHT) < 0)
+	{
+		GetCamera()->SetYaw(_movementSpeed);
+	}
+
+	// Look Up with "UP ARROW"
+	if (GetAsyncKeyState(VK_UP) < 0)
+	{
+		GetCamera()->SetPitch(-_movementSpeed);
+	}
+	//Look Down with "DOWN ARROW"
+	if (GetAsyncKeyState(VK_DOWN) < 0)
+	{
+		GetCamera()->SetPitch(_movementSpeed);
+	}
+
+	// Mouse Movement
 }

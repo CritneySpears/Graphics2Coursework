@@ -157,6 +157,7 @@ copy /Y "$(ProjectDir)white.png" "$(SolutionDir)$(Platform)\$(Configuration)"</C
     <ClInclude Include="DirectXCore.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="DirectXFramework.h" />
+    <ClInclude Include="GamePadController.h" />
     <ClInclude Include="Graphics2.h" />
     <ClInclude Include="HelperFunctions.h" />
     <ClInclude Include="Mesh.h" />
@@ -184,6 +185,7 @@ copy /Y "$(ProjectDir)white.png" "$(SolutionDir)$(Platform)\$(Configuration)"</C
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="DirectXFramework.cpp" />
+    <ClCompile Include="GamePadController.cpp" />
     <ClCompile Include="Graphics2.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshNode.cpp" />

@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 #include "MeshNode.h"
 #include "Camera.h"
+#include "GamePadController.h"
 
 class DirectXFramework : public Framework
 {
@@ -22,17 +23,17 @@ public:
 	void OnResize(WPARAM wParam);
 	void Shutdown();
 
-	static DirectXFramework *			GetDXFramework();
+	static DirectXFramework *				GetDXFramework();
 
-	inline SceneGraphPointer			GetSceneGraph() { return _sceneGraph; }
-	inline ComPtr<ID3D11Device>			GetDevice() { return _device; }
-	inline ComPtr<ID3D11DeviceContext>	GetDeviceContext() { return _deviceContext; }
-	inline shared_ptr<ResourceManager>	GetResourceManager() { return _resourceManager; }
-	inline shared_ptr<Camera>			GetCamera() { return _camera; }
+	inline SceneGraphPointer				GetSceneGraph() { return _sceneGraph; }
+	inline ComPtr<ID3D11Device>				GetDevice() { return _device; }
+	inline ComPtr<ID3D11DeviceContext>		GetDeviceContext() { return _deviceContext; }
+	inline shared_ptr<ResourceManager>		GetResourceManager() { return _resourceManager; }
+	inline shared_ptr<Camera>				GetCamera() { return _camera; }
 
-	XMMATRIX							GetProjectionTransformation();
+	XMMATRIX								GetProjectionTransformation();
 
-	void								SetBackgroundColour(XMFLOAT4 backgroundColour);
+	void									SetBackgroundColour(XMFLOAT4 backgroundColour);
 
 private:
 	ComPtr<ID3D11Device>				_device;

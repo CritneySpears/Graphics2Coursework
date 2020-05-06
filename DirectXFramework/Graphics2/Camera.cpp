@@ -6,7 +6,7 @@ XMVECTOR defaultUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 Camera::Camera()
 {
-    _cameraPosition = XMFLOAT4(0.0f, 50.0f, -500.0f, 0.0f);
+    _cameraPosition = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
     _moveLeftRight = 0.0f;
     _moveForwardBack = 0.0f;
     _cameraYaw = 0.0f;
