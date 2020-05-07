@@ -7,6 +7,15 @@
 class TerrainNode : public SceneNode
 {
 public:
+
+	struct TerrainVertex
+	{
+		XMFLOAT3 Position;
+		XMFLOAT3 Normal;
+		XMFLOAT2 TexCoord;
+		XMFLOAT2 BlendMapTexCoord;
+	};
+
 	TerrainNode(wstring name, wstring terrainName) : SceneNode(name) { _terrainName = terrainName; }
 
 	bool Initialise();
@@ -31,6 +40,9 @@ private:
 	ComPtr<ID3D11RasterizerState>		_defaultRasteriserState;
 	ComPtr<ID3D11RasterizerState>		_wireframeRasteriserState;
 
+	ComPtr<ID3D11ShaderResourceView>	_texturesResourceView;
+	ComPtr<ID3D11ShaderResourceView>	_blendMapResourceView;
+
 	UINT								_numberOfXPoints = 1024;
 	UINT								_numberOfZPoints = 1024;
 	UINT								_vertexCount = _numberOfXPoints * _numberOfZPoints;
@@ -38,7 +50,7 @@ private:
 	UINT								_terrainCellSize = 10;
 
 	wstring								_terrainName;
-	std::vector<VERTEX>					_vertices;
+	std::vector<TerrainVertex>			_vertices;
 	std::vector<UINT>					_indices;
 	std::vector<XMFLOAT3>				_faceNormals;
 	std::vector<float>					_heightValues;
@@ -51,5 +63,7 @@ private:
 	void BuildVertexLayout();
 	void BuildConstantBuffer();
 	bool LoadHeightMap(wstring heightMapFilename);
+	void LoadTerrainTextures();
+	void GenerateBlendMap();
 };
 

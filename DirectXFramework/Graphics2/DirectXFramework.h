@@ -7,6 +7,7 @@
 #include "MeshNode.h"
 #include "Camera.h"
 #include "GamePadController.h"
+#include "DDSTextureLoader.h"
 
 class DirectXFramework : public Framework
 {

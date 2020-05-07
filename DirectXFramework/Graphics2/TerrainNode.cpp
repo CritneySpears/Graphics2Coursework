@@ -1,5 +1,4 @@
 #include "TerrainNode.h"
-#include "Cube.h"
 #include <vector>
 #include <fstream>
 
@@ -19,8 +18,10 @@ bool TerrainNode::Initialise()
 	//Generate Normals for Polygons.
 	//Create vertex and Index buffers for terrain polygons.
 	LoadHeightMap(_terrainName);
+	LoadTerrainTextures();
 	GenerateGeometry();
 	CreateGeometryBuffers();
+	GenerateBlendMap();
 	BuildShaders();
 	BuildVertexLayout();
 	BuildConstantBuffer();
@@ -46,8 +47,12 @@ void TerrainNode::Render()
 	_deviceContext->VSSetShader(_vertexShader.Get(), 0, 0);
 	_deviceContext->PSSetShader(_pixelShader.Get(), 0, 0);
 	_deviceContext->IASetInputLayout(_layout.Get());
+
+	_deviceContext->PSSetShaderResources(0, 1, _blendMapResourceView.GetAddressOf());
+	_deviceContext->PSSetShaderResources(1, 1, _texturesResourceView.GetAddressOf());
+
 	// Update the constant buffer
-	UINT stride = sizeof(VERTEX);
+	UINT stride = sizeof(TerrainVertex);
 	UINT offset = 0;
 	_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
 	_deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
@@ -72,11 +77,13 @@ void TerrainNode::GenerateGeometry()
 		{
 			float worldHeightValue = 1024.0f;
 			float yValue = _heightValues[heightValueIndex] * worldHeightValue;
-			VERTEX currentVertex;
+			float u = (float)(x / _numberOfXPoints);
+			float v = (float)(z / _numberOfZPoints);
+			TerrainVertex currentVertex;
 			currentVertex.Position = XMFLOAT3((float)x * _terrainCellSize, yValue, (float)z * _terrainCellSize);
 			currentVertex.Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
 			currentVertex.TexCoord = XMFLOAT2(0.0f, 0.0f);
-			
+			currentVertex.BlendMapTexCoord = XMFLOAT2(u, v);
 			_vertices.push_back(currentVertex);
 			heightValueIndex++;
 		}
@@ -112,14 +119,14 @@ void TerrainNode::GenerateGeometry()
 			//move to next cell.
 
 			//Get the three indices for the face.
-			UINT index1 = (z * _numberOfZPoints) + x;
-			UINT index2 = (z * _numberOfZPoints) + (x + 1);
-			UINT index3 = ((z + 1) * _numberOfZPoints) + x;
+			UINT index1 = (z * _numberOfZPoints) + x; // bottom left vertex
+			UINT index2 = (z * _numberOfZPoints) + (x + 1); // bottom right vertex
+			UINT index3 = ((z + 1) * _numberOfZPoints) + x; // top left vertex
 
 			//Get the three vertices for the face.
-			VERTEX vertex1 = _vertices[index1];
-			VERTEX vertex2 = _vertices[index2];
-			VERTEX vertex3 = _vertices[index3];
+			TerrainVertex vertex1 = _vertices[index1];
+			TerrainVertex vertex2 = _vertices[index2];
+			TerrainVertex vertex3 = _vertices[index3];
 
 			//Calculate the two vectors for the face.
 			XMFLOAT3 vector1;
@@ -141,6 +148,15 @@ void TerrainNode::GenerateGeometry()
 			faceNormal.y = (vector1.z * vector2.x) - (vector1.x * vector2.z);
 			faceNormal.z = (vector1.x * vector2.y) - (vector1.y * vector2.x);
 			_faceNormals.push_back(faceNormal);
+
+			// Set the texture co-ordinates at each corner of the cell face.
+
+			UINT index4 = ((z + 1) * _numberOfZPoints) + (x + 1); // top right vertex
+
+			_vertices.at(index1).TexCoord = XMFLOAT2(0.0f, 1.0f); // bottom left tex coord
+			_vertices.at(index2).TexCoord = XMFLOAT2(1.0f, 1.0f); // bottom right tex coord
+			_vertices.at(index3).TexCoord = XMFLOAT2(0.0f, 0.0f); // top left tex coord
+			_vertices.at(index4).TexCoord = XMFLOAT2(1.0f, 0.0f); // top right tex coord
 		}
 	}
 
@@ -213,39 +229,6 @@ void TerrainNode::GenerateGeometry()
 			_vertices.at(index).Normal = XMFLOAT3(sum[0] / length, sum[1] / length, sum[2] / length);
 		}
 	}
-
-	/*
-	for (int z = 5110; z > -5120; z -= _TerrainCellSize)
-	{
-		for (int x = -5120; x < 5110; x += _TerrainCellSize)
-		{
-			float y = 0.0f;
-			VERTEX * currentVertex = new VERTEX;
-			currentVertex->Position =	XMFLOAT3((float)x, y, (float)z);
-			currentVertex->Normal =		XMFLOAT3(0.0f, 0.0f, 0.0f);
-			currentVertex->TexCoord =	XMFLOAT2(0.0f, 0.0f);
-			
-			_vertices.push_back(*currentVertex);
-		}
-	}
-	for (unsigned int cellZ = 1; cellZ <= (_numberOfZPoints - 1); cellZ++)
-	{
-		for (unsigned int cellX = 1; cellX <= (_numberOfXPoints - 1); cellX++)
-		{
-			// Indices for triangle 1
-
-			_indices.push_back(cellX + (cellZ * (_numberOfXPoints - 1)));
-			_indices.push_back(cellX + 1 + (cellZ * (_numberOfXPoints - 1)));
-			_indices.push_back(cellX + ((cellZ + 1) * (_numberOfXPoints - 1)));
-
-			//Indices for triangle 2
-
-			_indices.push_back(cellX + ((cellZ + 1) * (_numberOfXPoints - 1)));
-			_indices.push_back(cellX + 1 + (cellZ * (_numberOfXPoints - 1)));
-			_indices.push_back(cellX + 1 + ((cellZ + 1) * (_numberOfXPoints - 1)));
-		}
-	}
-	*/
 }
 
 void TerrainNode::CreateGeometryBuffers()
@@ -254,7 +237,7 @@ void TerrainNode::CreateGeometryBuffers()
 	// buffer should be
 	D3D11_BUFFER_DESC vertexBufferDescriptor;
 	vertexBufferDescriptor.Usage = D3D11_USAGE_IMMUTABLE;
-	vertexBufferDescriptor.ByteWidth = sizeof(VERTEX) * (UINT)_vertices.size();
+	vertexBufferDescriptor.ByteWidth = sizeof(TerrainVertex) * (UINT)_vertices.size();
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDescriptor.CPUAccessFlags = 0;
 	vertexBufferDescriptor.MiscFlags = 0;
@@ -338,6 +321,7 @@ void TerrainNode::BuildVertexLayout()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	ThrowIfFailed(_device->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), _vertexShaderByteCode->GetBufferPointer(), _vertexShaderByteCode->GetBufferSize(), _layout.GetAddressOf()));
 }
@@ -395,4 +379,163 @@ bool TerrainNode::LoadHeightMap(wstring heightMapFilename)
 	}
 	delete[] rawFileValues;
 	return true;
+}
+
+void TerrainNode::LoadTerrainTextures()
+{
+	// Change the paths below as appropriate for your use
+	wstring terrainTextureNames[5] = { L"grass.dds", L"darkdirt.dds", L"stone.dds", L"lightdirt.dds", L"snow.dds" };
+
+	// Load the textures from the files
+	ComPtr<ID3D11Resource> terrainTextures[5];
+	for (int i = 0; i < 5; i++)
+	{
+		ThrowIfFailed(CreateDDSTextureFromFileEx(_device.Get(),
+			_deviceContext.Get(),
+			terrainTextureNames[i].c_str(),
+			0,
+			D3D11_USAGE_IMMUTABLE,
+			D3D11_BIND_SHADER_RESOURCE,
+			0,
+			0,
+			false,
+			terrainTextures[i].GetAddressOf(),
+			nullptr
+		));
+	}
+	// Now create the Texture2D arrary.  We assume all textures in the
+	// array have the same format and dimensions
+
+	D3D11_TEXTURE2D_DESC textureDescription;
+	ComPtr<ID3D11Texture2D> textureInterface;
+	terrainTextures[0].As<ID3D11Texture2D>(&textureInterface);
+	textureInterface->GetDesc(&textureDescription);
+
+	D3D11_TEXTURE2D_DESC textureArrayDescription;
+	textureArrayDescription.Width = textureDescription.Width;
+	textureArrayDescription.Height = textureDescription.Height;
+	textureArrayDescription.MipLevels = textureDescription.MipLevels;
+	textureArrayDescription.ArraySize = 5;
+	textureArrayDescription.Format = textureDescription.Format;
+	textureArrayDescription.SampleDesc.Count = 1;
+	textureArrayDescription.SampleDesc.Quality = 0;
+	textureArrayDescription.Usage = D3D11_USAGE_DEFAULT;
+	textureArrayDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureArrayDescription.CPUAccessFlags = 0;
+	textureArrayDescription.MiscFlags = 0;
+
+	ComPtr<ID3D11Texture2D> textureArray = 0;
+	ThrowIfFailed(_device->CreateTexture2D(&textureArrayDescription, 0, textureArray.GetAddressOf()));
+
+	// Copy individual texture elements into texture array.
+
+	for (UINT i = 0; i < 5; i++)
+	{
+		// For each mipmap level...
+		for (UINT mipLevel = 0; mipLevel < textureDescription.MipLevels; mipLevel++)
+		{
+			_deviceContext->CopySubresourceRegion(textureArray.Get(),
+				D3D11CalcSubresource(mipLevel, i, textureDescription.MipLevels),
+				NULL,
+				NULL,
+				NULL,
+				terrainTextures[i].Get(),
+				mipLevel,
+				nullptr
+			);
+		}
+	}
+
+	// Create a resource view to the texture array.
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDescription;
+	viewDescription.Format = textureArrayDescription.Format;
+	viewDescription.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+	viewDescription.Texture2DArray.MostDetailedMip = 0;
+	viewDescription.Texture2DArray.MipLevels = textureArrayDescription.MipLevels;
+	viewDescription.Texture2DArray.FirstArraySlice = 0;
+	viewDescription.Texture2DArray.ArraySize = 5;
+
+	ThrowIfFailed(_device->CreateShaderResourceView(textureArray.Get(), &viewDescription, _texturesResourceView.GetAddressOf()));
+}
+
+void TerrainNode::GenerateBlendMap()
+{
+	// Note that _numberOfRows and _numberOfColumns need to be setup
+	// to the number of rows and columns in your grid in order for this
+	// to work.
+	
+	int mapSize = _numberOfXPoints * _numberOfZPoints;
+	DWORD* blendMap = new DWORD[mapSize];
+	DWORD* blendMapPtr = blendMap;
+	BYTE r;
+	BYTE g;
+	BYTE b;
+	BYTE a;
+
+	int index = 0;
+	for (DWORD z = 0; z < _numberOfZPoints - 1; z++)
+	{
+		for (DWORD x = 0; x < _numberOfXPoints - 1; x++)
+		{
+
+			// Calculate the appropriate blend colour for the 
+			// current location in the blend map.  This has been
+			// left as an exercise for you.  You need to calculate
+			// appropriate values for the r, g, b and a values (each
+			// between 0 and 255). The code below combines these
+			// into a DWORD (32-bit value) and stores it in the blend map.
+
+			float slope = _faceNormals[index].y;
+			int index1 = x;
+			int index2 = x + 1;
+			int index3 = x + (z * _numberOfZPoints);
+			int index4 = (x + 1) + (z * _numberOfZPoints);
+
+			float v1Height = _vertices.at(index1).Position.y;
+			float v2Height = _vertices.at(index2).Position.y;
+			float v3Height = _vertices.at(index3).Position.y;
+			float v4Height = _vertices.at(index4).Position.y;
+			float heightAverage = (v1Height + v2Height + v3Height + v4Height) / 4;
+
+			r = 0;
+			g = 0;
+			b = 0;
+			a = 0;
+
+
+
+			DWORD mapValue = (a << 24) + (b << 16) + (g << 8) + r;
+			*blendMapPtr++ = mapValue;
+			index++;
+		}
+	}
+	D3D11_TEXTURE2D_DESC blendMapDescription;
+	blendMapDescription.Width = _numberOfXPoints;
+	blendMapDescription.Height = _numberOfZPoints;
+	blendMapDescription.MipLevels = 1;
+	blendMapDescription.ArraySize = 1;
+	blendMapDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	blendMapDescription.SampleDesc.Count = 1;
+	blendMapDescription.SampleDesc.Quality = 0;
+	blendMapDescription.Usage = D3D11_USAGE_DEFAULT;
+	blendMapDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	blendMapDescription.CPUAccessFlags = 0;
+	blendMapDescription.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA blendMapInitialisationData;
+	blendMapInitialisationData.pSysMem = blendMap;
+	blendMapInitialisationData.SysMemPitch = 4 * _numberOfZPoints;
+
+	ComPtr<ID3D11Texture2D> blendMapTexture;
+	ThrowIfFailed(_device->CreateTexture2D(&blendMapDescription, &blendMapInitialisationData, blendMapTexture.GetAddressOf()));
+
+	// Create a resource view to the texture array.
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDescription;
+	viewDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	viewDescription.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	viewDescription.Texture2D.MostDetailedMip = 0;
+	viewDescription.Texture2D.MipLevels = 1;
+
+	ThrowIfFailed(_device->CreateShaderResourceView(blendMapTexture.Get(), &viewDescription, _blendMapResourceView.GetAddressOf()));
+	delete[] blendMap;
 }

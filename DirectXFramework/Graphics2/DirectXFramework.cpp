@@ -15,10 +15,10 @@ DirectXFramework::DirectXFramework(unsigned int width, unsigned int height) : Fr
 	_dxFramework = this;
 
 	// Set default background colour
-	_backgroundColour[0] = 01.0f;
-	_backgroundColour[1] = 01.0f;
-	_backgroundColour[2] = 01.0f;
-	_backgroundColour[3] = 01.0f;
+	_backgroundColour[0] = 0.7f;
+	_backgroundColour[1] = 0.7f;
+	_backgroundColour[2] = 0.7f;
+	_backgroundColour[3] = 1.0f;
 
 	// Initialise vectors used to create camera.  We will move these
 	// to a separate Camera class later
