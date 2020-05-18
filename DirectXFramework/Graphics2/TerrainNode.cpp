@@ -1,14 +1,21 @@
 #include "TerrainNode.h"
 #include <vector>
 #include <fstream>
+#include <algorithm>
 
 struct CBUFFER
 {
 	XMMATRIX    CompleteTransformation;
 	XMMATRIX	WorldTransformation;
+	XMFLOAT4	CameraPosition;
 	XMVECTOR    LightVector;
-	XMFLOAT4    LightColour;
-	XMFLOAT4    AmbientColour;
+	XMFLOAT4    LightColor;
+	XMFLOAT4    AmbientColor;
+	XMFLOAT4    DiffuseCoefficient;
+	XMFLOAT4	SpecularCoefficient;
+	float		Shininess;
+	float		Opacity;
+	float       Padding[2];
 };
 
 bool TerrainNode::Initialise()
@@ -34,20 +41,27 @@ void TerrainNode::Render()
 	XMMATRIX viewTransformation = DirectXFramework::GetDXFramework()->GetCamera()->GetViewMatrix();
 	XMMATRIX completeTransformation = XMLoadFloat4x4(&_combinedWorldTransformation) * viewTransformation * DirectXFramework::GetDXFramework()->GetProjectionTransformation();
 	CBUFFER cBuffer;
+	std::memset(&cBuffer, 0, sizeof(cBuffer)); // Sets the memory at address of cBuffer to 0 within the range of bytes of cBuffer. Ensures no junk is being sent to GPU.
 	cBuffer.CompleteTransformation = completeTransformation;
 	cBuffer.WorldTransformation = XMLoadFloat4x4(&_combinedWorldTransformation);
-	cBuffer.AmbientColour = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	cBuffer.LightVector = XMVector4Normalize(XMVectorSet(0.0f, 01.0f, 1.0f, 0.0f));
-	cBuffer.LightColour = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	// Update the constant buffer 
-	_deviceContext->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
-	_deviceContext->UpdateSubresource(_constantBuffer.Get(), 0, 0, &cBuffer, 0, 0);
+	cBuffer.AmbientColor = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	cBuffer.LightVector = XMVector4Normalize(XMVectorSet(0.0f, 1.0f, 1.0f, 0.0f));
+	cBuffer.LightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	cBuffer.DiffuseCoefficient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	cBuffer.SpecularCoefficient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	cBuffer.Shininess = 0.0f;
+	cBuffer.Opacity = 1.0f;
+	cBuffer.CameraPosition = _cameraPosition;
 
 	_deviceContext->VSSetShader(_vertexShader.Get(), 0, 0);
 	_deviceContext->PSSetShader(_pixelShader.Get(), 0, 0);
 	_deviceContext->IASetInputLayout(_layout.Get());
 
+	// Update the constant buffer 
+	_deviceContext->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
+	_deviceContext->UpdateSubresource(_constantBuffer.Get(), 0, 0, &cBuffer, 0, 0);
+
+	// Set texture to be used by pixel shader
 	_deviceContext->PSSetShaderResources(0, 1, _blendMapResourceView.GetAddressOf());
 	_deviceContext->PSSetShaderResources(1, 1, _texturesResourceView.GetAddressOf());
 
@@ -496,19 +510,46 @@ void TerrainNode::GenerateBlendMap()
 			float v3Height = _vertices.at(index3).Position.y;
 			float v4Height = _vertices.at(index4).Position.y;
 			float heightAverage = (v1Height + v2Height + v3Height + v4Height) / 4;
-
-			r = 0;
-			g = 0;
-			b = 0;
-			a = 0;
+			_avgHeights.push_back(heightAverage); // for debugging.
 
 
+			if (heightAverage <= 300)
+			{
+				r = 0;
+				g = 0;
+				b = 0;
+				a = 0;
+			}
+			else if (heightAverage <= 600)
+			{
+				r = 255;
+				g = 0;
+				b = 0;
+				a = 0;
+
+			}
+			else if (heightAverage <= 900)
+			{
+				r = 0;
+				g = 255;
+				b = 0;
+				a = 0;
+			}
+			else
+			{
+				r = 0;
+				g = 0;
+				b = 0;
+				a = 255;
+			}
 
 			DWORD mapValue = (a << 24) + (b << 16) + (g << 8) + r;
 			*blendMapPtr++ = mapValue;
 			index++;
 		}
 	}
+	float minHeight = *std::min_element(_avgHeights.begin(), _avgHeights.end()); // for debugging, finds highest and lowest points in the map.
+	float maxHeight = *std::max_element(_avgHeights.begin(), _avgHeights.end());
 	D3D11_TEXTURE2D_DESC blendMapDescription;
 	blendMapDescription.Width = _numberOfXPoints;
 	blendMapDescription.Height = _numberOfZPoints;

@@ -37,6 +37,8 @@ private:
 	ComPtr<ID3D11InputLayout>			_layout;
 	ComPtr<ID3D11Buffer>				_constantBuffer;
 
+	XMFLOAT4							_cameraPosition;
+
 	ComPtr<ID3D11RasterizerState>		_defaultRasteriserState;
 	ComPtr<ID3D11RasterizerState>		_wireframeRasteriserState;
 
@@ -54,6 +56,7 @@ private:
 	std::vector<UINT>					_indices;
 	std::vector<XMFLOAT3>				_faceNormals;
 	std::vector<float>					_heightValues;
+	std::vector<float>					_avgHeights;
 
 
 	void BuildRendererStates();
