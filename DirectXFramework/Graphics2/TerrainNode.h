@@ -2,11 +2,25 @@
 
 #include "SceneNode.h"
 #include "DirectXFramework.h"
-#include "ResourceManager.h"
 
 class TerrainNode : public SceneNode
 {
 public:
+
+	struct CBUFFER
+	{
+		XMMATRIX    CompleteTransformation;
+		XMMATRIX	WorldTransformation;
+		XMFLOAT4	CameraPosition;
+		XMVECTOR    LightVector;
+		XMFLOAT4    LightColor;
+		XMFLOAT4    AmbientColor;
+		XMFLOAT4    DiffuseCoefficient;
+		XMFLOAT4	SpecularCoefficient;
+		float		Shininess;
+		float		Opacity;
+		float       Padding[2];
+	};
 
 	struct TerrainVertex
 	{
@@ -15,6 +29,7 @@ public:
 		XMFLOAT2 TexCoord;
 		XMFLOAT2 BlendMapTexCoord;
 	};
+
 
 	TerrainNode(wstring name, wstring terrainName) : SceneNode(name) { _terrainName = terrainName; }
 
@@ -65,7 +80,7 @@ private:
 	void BuildShaders();
 	void BuildVertexLayout();
 	void BuildConstantBuffer();
-	bool LoadHeightMap(wstring heightMapFilename);
+	bool LoadHeightMap();
 	void LoadTerrainTextures();
 	void GenerateBlendMap();
 };

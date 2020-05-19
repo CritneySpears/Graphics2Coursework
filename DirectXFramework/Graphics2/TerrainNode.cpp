@@ -3,28 +3,13 @@
 #include <fstream>
 #include <algorithm>
 
-struct CBUFFER
-{
-	XMMATRIX    CompleteTransformation;
-	XMMATRIX	WorldTransformation;
-	XMFLOAT4	CameraPosition;
-	XMVECTOR    LightVector;
-	XMFLOAT4    LightColor;
-	XMFLOAT4    AmbientColor;
-	XMFLOAT4    DiffuseCoefficient;
-	XMFLOAT4	SpecularCoefficient;
-	float		Shininess;
-	float		Opacity;
-	float       Padding[2];
-};
-
 bool TerrainNode::Initialise()
 {
 	//Load Height Map.
 	//Generate Vertices and Indices for polygons in the terrain grid.
 	//Generate Normals for Polygons.
 	//Create vertex and Index buffers for terrain polygons.
-	LoadHeightMap(_terrainName);
+	LoadHeightMap();
 	LoadTerrainTextures();
 	GenerateGeometry();
 	CreateGeometryBuffers();
@@ -103,25 +88,19 @@ void TerrainNode::GenerateGeometry()
 		}
 	}
 
-	UINT k = 0;
-
-	for (UINT i = 0; i < _indexCount; i += 6)
+	// Now build Indices, two triangles per face.
+	for (UINT z = 0; z < _numberOfZPoints - 1; z++)
 	{
-		UINT currentIndices[6] = {};
-		currentIndices[0] = k;
-		currentIndices[1] = k + _numberOfZPoints;
-		currentIndices[2] = k + _numberOfZPoints + 1;
-		currentIndices[3] = k;
-		currentIndices[4] = k + _numberOfZPoints + 1;
-		currentIndices[5] = k + 1;
-
-		k++;
-
-		for each (UINT indices in currentIndices)
+		for (UINT x = 0; x < _numberOfXPoints - 1; x++)
 		{
-			_indices.push_back(indices);
-		}
+			_indices.push_back(	(z    ) * _numberOfXPoints + (x    ) );
+			_indices.push_back( (z + 1) * _numberOfXPoints + (x    ) ); // Triangle one
+			_indices.push_back( (z + 1) * _numberOfXPoints + (x + 1) );
 
+			_indices.push_back( (z    ) * _numberOfXPoints + (x    ) );
+			_indices.push_back( (z + 1) * _numberOfXPoints + (x + 1) ); // Triangle two
+			_indices.push_back( (z    ) * _numberOfXPoints + (x + 1) );			
+		}
 	}
 
 	for (UINT z = 0; z < _numberOfZPoints - 1; z++)
@@ -371,13 +350,13 @@ void TerrainNode::BuildConstantBuffer()
 }
 
 
-bool TerrainNode::LoadHeightMap(wstring heightMapFilename)
+bool TerrainNode::LoadHeightMap()
 {
 	unsigned int mapSize = _numberOfXPoints * _numberOfZPoints;
 	USHORT* rawFileValues = new USHORT[mapSize];
 
 	std::ifstream inputHeightMap;
-	inputHeightMap.open(heightMapFilename.c_str(), std::ios_base::binary);
+	inputHeightMap.open(_terrainName.c_str(), std::ios_base::binary);
 	if (!inputHeightMap)
 	{
 		return false;

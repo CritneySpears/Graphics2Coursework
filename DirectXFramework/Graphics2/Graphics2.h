@@ -13,6 +13,7 @@ private:
 	wchar_t*			_concreteTexture = L"Concrete.png";
 	wchar_t*			_brickTexture = L"Bricks.png";
 	wchar_t*			_woodBoxTexture = L"Woodbox.bmp";
+	wchar_t*			_skyBoxTexture = L"skymap.dds";
 	float				_circleAngle;
 	float				_planeWobble;
 	float				_movementSpeed = 2.0f;

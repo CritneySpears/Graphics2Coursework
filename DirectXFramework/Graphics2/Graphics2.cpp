@@ -1,6 +1,7 @@
 #include "Graphics2.h"
 #include "Cube.h"
 #include "TerrainNode.h"
+#include "SkyNode.h"
 
 Graphics2 app;
 
@@ -16,6 +17,10 @@ void Graphics2::CreateSceneGraph()
 	SceneNodePointer node = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
 	node->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
 	sceneGraph->Add(node);
+
+	SceneNodePointer skyBox = make_shared<SkyNode>(L"SkyBox", _skyBoxTexture, 5000.0f);
+	skyBox->SetWorldTransform(XMMatrixTranslation(0, 0, 0));
+	sceneGraph->Add(skyBox);
 	
 	// This is where you add nodes to the scene graph
 

@@ -169,6 +169,7 @@ copy /Y "$(ProjectDir)white.png" "$(SolutionDir)$(Platform)\$(Configuration)"</C
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SceneGraph.h" />
     <ClInclude Include="SceneNode.h" />
+    <ClInclude Include="SkyNode.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TerrainNode.h" />
     <ClInclude Include="WICTextureLoader.h" />
@@ -194,6 +195,7 @@ copy /Y "$(ProjectDir)white.png" "$(SolutionDir)$(Platform)\$(Configuration)"</C
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneGraph.cpp" />
+    <ClCompile Include="SkyNode.cpp" />
     <ClCompile Include="TerrainNode.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
   </ItemGroup>
