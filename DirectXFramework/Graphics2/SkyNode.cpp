@@ -17,10 +17,11 @@ void SkyNode::Render()
 {
 	XMMATRIX viewTransformation = DirectXFramework::GetDXFramework()->GetCamera()->GetViewMatrix();
 	XMMATRIX projTransformation = DirectXFramework::GetDXFramework()->GetProjectionTransformation();
-	XMMATRIX completeTransformation = XMLoadFloat4x4(&_combinedWorldTransformation) * viewTransformation * projTransformation;
+	XMMATRIX cameraPosition = XMMatrixTranslationFromVector(DirectXFramework::GetDXFramework()->GetCamera()->GetCameraPosition());
+	XMMATRIX completeTransformation = XMLoadFloat4x4(&_combinedWorldTransformation);
 	CBUFFER cBuffer;
 	std::memset(&cBuffer, 0, sizeof(cBuffer)); // Sets the memory at address of cBuffer to 0 within the range of bytes of cBuffer. Ensures no junk is being sent to GPU.
-	cBuffer.CompleteTransformation = completeTransformation * XMMatrixTranslationFromVector((DirectXFramework::GetDXFramework()->GetCamera()->GetCameraPosition()));
+	cBuffer.CompleteTransformation = completeTransformation * cameraPosition * viewTransformation * projTransformation;
 
 	_deviceContext->VSSetShader(_vertexShader.Get(), 0, 0);
 	_deviceContext->PSSetShader(_pixelShader.Get(), 0, 0);
@@ -31,7 +32,7 @@ void SkyNode::Render()
 	_deviceContext->UpdateSubresource(_constantBuffer.Get(), 0, 0, &cBuffer, 0, 0);
 
 	// Pass sky map texture to shader.
-	_deviceContext->PSSetShaderResources(0, 1, _texturesResourceView.GetAddressOf());
+	_deviceContext->PSSetShaderResources(0, 1, _textureResourceView.GetAddressOf());
 
 	// Disable backface culling and change depth stencil equation.
 	_deviceContext->RSSetState(_noCullRasteriserState.Get());
@@ -221,18 +222,17 @@ void SkyNode::BuildConstantBuffer()
 
 void SkyNode::BuildTexture()
 {
-
 	ThrowIfFailed(CreateDDSTextureFromFileEx(_device.Get(),
 		_deviceContext.Get(),
 		_skyNodeTexturePath,
 		0,
-		D3D11_USAGE_IMMUTABLE,
+		D3D11_USAGE_DEFAULT,
 		D3D11_BIND_SHADER_RESOURCE,
 		0,
-		0,
+		D3D11_RESOURCE_MISC_TEXTURECUBE,
 		false,
 		_texture.GetAddressOf(),
-		nullptr
+		_textureResourceView.GetAddressOf()
 	));
 }
 

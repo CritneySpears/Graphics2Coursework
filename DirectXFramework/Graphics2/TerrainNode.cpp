@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <ctgmath>
 
 bool TerrainNode::Initialise()
 {
@@ -25,6 +26,7 @@ void TerrainNode::Render()
 {
 	XMMATRIX viewTransformation = DirectXFramework::GetDXFramework()->GetCamera()->GetViewMatrix();
 	XMMATRIX completeTransformation = XMLoadFloat4x4(&_combinedWorldTransformation) * viewTransformation * DirectXFramework::GetDXFramework()->GetProjectionTransformation();
+	XMStoreFloat4(&_cameraPosition, DirectXFramework::GetDXFramework()->GetCamera()->GetCameraPosition());
 	CBUFFER cBuffer;
 	std::memset(&cBuffer, 0, sizeof(cBuffer)); // Sets the memory at address of cBuffer to 0 within the range of bytes of cBuffer. Ensures no junk is being sent to GPU.
 	cBuffer.CompleteTransformation = completeTransformation;
@@ -349,7 +351,6 @@ void TerrainNode::BuildConstantBuffer()
 	ThrowIfFailed(_device->CreateBuffer(&bufferDesc, NULL, _constantBuffer.GetAddressOf()));
 }
 
-
 bool TerrainNode::LoadHeightMap()
 {
 	unsigned int mapSize = _numberOfXPoints * _numberOfZPoints;
@@ -491,36 +492,10 @@ void TerrainNode::GenerateBlendMap()
 			float heightAverage = (v1Height + v2Height + v3Height + v4Height) / 4;
 			_avgHeights.push_back(heightAverage); // for debugging.
 
-
-			if (heightAverage <= 300)
-			{
-				r = 0;
-				g = 0;
-				b = 0;
-				a = 0;
-			}
-			else if (heightAverage <= 600)
-			{
-				r = 255;
-				g = 0;
-				b = 0;
-				a = 0;
-
-			}
-			else if (heightAverage <= 900)
-			{
-				r = 0;
-				g = 255;
-				b = 0;
-				a = 0;
-			}
-			else
-			{
-				r = 0;
-				g = 0;
-				b = 0;
-				a = 255;
-			}
+			r = 0;
+			g = 0;
+			b = 0;
+			a = 0;
 
 			DWORD mapValue = (a << 24) + (b << 16) + (g << 8) + r;
 			*blendMapPtr++ = mapValue;

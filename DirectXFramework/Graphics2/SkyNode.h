@@ -43,8 +43,7 @@ private:
 
 	ComPtr<ID3D11DepthStencilState>		_stencilState;
 
-	ComPtr<ID3D11ShaderResourceView>	_texturesResourceView;
-	ComPtr<ID3D11ShaderResourceView>	_blendMapResourceView;
+	ComPtr<ID3D11ShaderResourceView>	_textureResourceView;
 	ComPtr<ID3D11Resource>				_texture;
 
 	wchar_t*							_skyNodeTexturePath;

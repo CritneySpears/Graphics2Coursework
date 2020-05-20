@@ -14,13 +14,23 @@ void Graphics2::CreateSceneGraph()
 	terrain->SetWorldTransform(XMMatrixTranslation(-5120, -1024, -5120) * XMMatrixRotationY(XMConvertToRadians(0)));
 	sceneGraph->Add(terrain);
 
-	SceneNodePointer node = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
-	node->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
-	sceneGraph->Add(node);
+	SceneNodePointer plane = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
+	plane->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90), 0));
+	sceneGraph->Add(plane);
+
+	SceneNodePointer rock = make_shared<MeshNode>(L"rock1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Rock\\rock_3.obj");
+	rock->SetWorldTransform(XMMatrixTranslation(1, 1, 1));
+	sceneGraph->Add(rock);
+
+	SceneNodePointer building = make_shared<MeshNode>(L"House", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Building\\WoodenCabinObj.obj");
+	building->SetWorldTransform(XMMatrixTranslation(1, 1, 1));
+	sceneGraph->Add(building);
 
 	SceneNodePointer skyBox = make_shared<SkyNode>(L"SkyBox", _skyBoxTexture, 5000.0f);
-	skyBox->SetWorldTransform(XMMatrixTranslation(0, 0, 0));
+	//skyBox->SetWorldTransform(XMMatrixTranslationFromVector(GetCamera()->GetCameraPosition()));
 	sceneGraph->Add(skyBox);
+
+	
 	
 	// This is where you add nodes to the scene graph
 
@@ -51,16 +61,20 @@ void Graphics2::CreateSceneGraph()
 
 void Graphics2::UpdateSceneGraph()
 {
+	// This is where you make any changes to the local world transformations to nodes
+	// in the scene graph
+
 	SceneGraphPointer sceneGraph = GetSceneGraph();
 	SceneNodePointer planeLocal = sceneGraph->Find(L"Plane1");
 	SceneNodePointer terrainLocal = sceneGraph->Find(L"SampleTerrain");
+	SceneNodePointer skyBoxLocal = sceneGraph->Find(L"SkyBox");
 	_controller.ProcessGameController();
 
-	_circleAngle += 1.0f;
+	_circleAngle += 0.50f;
+	XMVECTOR camPosition = GetCamera()->GetCameraPosition();
 
-	planeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 100.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.2f, 0.0f), -_circleAngle * XM_PI / 180.0f));
-	// This is where you make any changes to the local world transformations to nodes
-	// in the scene graph
+	//skyBoxLocal->SetWorldTransform(XMMatrixTranslationFromVector(GetCamera()->GetCameraPosition()));
+	planeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 500.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 0.10f, 0.02f, 0.0f), -_circleAngle * XM_PI / 180.0f));
 
 	// This is where controls for moving the camera are set.
 
