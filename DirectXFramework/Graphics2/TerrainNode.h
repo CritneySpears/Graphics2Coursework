@@ -36,6 +36,7 @@ public:
 	bool Initialise();
 	void Render();
 	void Shutdown();
+	float GetHeightAtPoint(float x, float z);
 
 private:
 

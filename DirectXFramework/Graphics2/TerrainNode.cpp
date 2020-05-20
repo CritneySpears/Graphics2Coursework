@@ -95,13 +95,13 @@ void TerrainNode::GenerateGeometry()
 	{
 		for (UINT x = 0; x < _numberOfXPoints - 1; x++)
 		{
-			_indices.push_back(	(z    ) * _numberOfXPoints + (x    ) );
-			_indices.push_back( (z + 1) * _numberOfXPoints + (x    ) ); // Triangle one
-			_indices.push_back( (z + 1) * _numberOfXPoints + (x + 1) );
+			_indices.push_back(	(z    ) * _numberOfXPoints + (x    ) );	// bottom left of cell
+			_indices.push_back( (z + 1) * _numberOfXPoints + (x    ) ); // top left of cell			Triangle one
+			_indices.push_back( (z + 1) * _numberOfXPoints + (x + 1) ); // top right of cell
 
-			_indices.push_back( (z    ) * _numberOfXPoints + (x    ) );
-			_indices.push_back( (z + 1) * _numberOfXPoints + (x + 1) ); // Triangle two
-			_indices.push_back( (z    ) * _numberOfXPoints + (x + 1) );			
+			_indices.push_back( (z    ) * _numberOfXPoints + (x    ) ); // bottom left of cell
+			_indices.push_back( (z + 1) * _numberOfXPoints + (x + 1) ); // top right of cell		Triangle two
+			_indices.push_back( (z    ) * _numberOfXPoints + (x + 1) );	// bottom right of cell
 		}
 	}
 
@@ -533,4 +533,34 @@ void TerrainNode::GenerateBlendMap()
 
 	ThrowIfFailed(_device->CreateShaderResourceView(blendMapTexture.Get(), &viewDescription, _blendMapResourceView.GetAddressOf()));
 	delete[] blendMap;
+}
+
+float TerrainNode::GetHeightAtPoint(float x, float z)
+{
+	float terrainStartX = _worldTransformation._41;				// Get the X coordinate from the world transformation
+	float terrainStartZ = _worldTransformation._43;				// Get the Y coordinate from the world transformation
+
+	int cellX = (int)((x - terrainStartX) / _terrainCellSize);	// cell x coordinate
+	int cellZ = (int)((z - terrainStartZ) / _terrainCellSize);	// cell y coordinate
+
+	int cellIndex = (cellZ * (_numberOfXPoints - 1)) + cellX;
+
+	UINT v0 = ((cellZ    ) * _numberOfXPoints + (cellX   ));			// bottom left of cell - edge of grid cell to calculate dz and dx
+	UINT v1 = ((cellZ + 1) * _numberOfXPoints + (cellX   ));			// top left of cell
+	UINT v2 = ((cellZ + 1) * _numberOfXPoints + (cellX + 1));			// top right of cell
+	UINT v3 = ((cellZ    ) * _numberOfXPoints + (cellX + 1));			// bottom right of cell
+
+	float dz = z - _vertices[cellIndex].Position.z;
+	float dx = x - _vertices[cellIndex].Position.x;
+
+	if (dx > dz)
+	{
+		// v0, v1, v2 Tri
+	}
+	else
+	{
+		// v0, v2, v3 Tri
+	}
+
+	return 1.0f;
 }
