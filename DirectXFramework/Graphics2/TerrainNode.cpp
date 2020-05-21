@@ -78,8 +78,8 @@ void TerrainNode::GenerateGeometry()
 		{
 			float worldHeightValue = 1024.0f;
 			float yValue = _heightValues[heightValueIndex] * worldHeightValue;
-			float u = (float)(x / _numberOfXPoints);
-			float v = (float)(z / _numberOfZPoints);
+			float u = ((float)x / (float)_numberOfXPoints);
+			float v = ((float)z / (float)_numberOfZPoints);
 			TerrainVertex currentVertex;
 			currentVertex.Position = XMFLOAT3((float)x * _terrainCellSize, yValue, (float)z * _terrainCellSize);
 			currentVertex.Normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -479,7 +479,7 @@ void TerrainNode::GenerateBlendMap()
 			// between 0 and 255). The code below combines these
 			// into a DWORD (32-bit value) and stores it in the blend map.
 
-			float slope = _faceNormals[index].y;
+			float slope = _faceNormals[index].z;
 			int index1 = x;
 			int index2 = x + 1;
 			int index3 = x + (z * _numberOfZPoints);
@@ -492,10 +492,20 @@ void TerrainNode::GenerateBlendMap()
 			float heightAverage = (v1Height + v2Height + v3Height + v4Height) / 4;
 			_avgHeights.push_back(heightAverage); // for debugging.
 
-			r = 0;
-			g = 0;
-			b = 0;
-			a = 0;
+			if (slope <= 0.0f)
+			{
+				r = 0;
+				g = 0;
+				b = 255;
+				a = 0;
+			}
+			else
+			{
+				r = 0;
+				g = 0;
+				b = 0;
+				a = 0;
+			}
 
 			DWORD mapValue = (a << 24) + (b << 16) + (g << 8) + r;
 			*blendMapPtr++ = mapValue;

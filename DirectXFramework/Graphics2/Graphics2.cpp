@@ -20,12 +20,20 @@ void Graphics2::CreateSceneGraph()
 	plane->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), XMConvertToRadians(0.0f)) * XMMatrixRotationX(XMConvertToRadians(-30)) * XMMatrixTranslation(700.0f, -300.0f, -900.0f));
 	sceneGraph->Add(plane);
 
-	SceneNodePointer rock = make_shared<MeshNode>(L"rock1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Rock\\rock_3.obj");
-	rock->SetWorldTransform(XMMatrixTranslation(1, 1, 1));
-	sceneGraph->Add(rock);
+	SceneNodePointer rock1 = make_shared<MeshNode>(L"rock1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Rock\\rock_3.obj");
+	rock1->SetWorldTransform(XMMatrixScaling(15.0f, 15.0f, 15.0f) * XMMatrixTranslation(300, -470, -1100));
+	sceneGraph->Add(rock1);
+
+	SceneNodePointer rock2 = make_shared<MeshNode>(L"rock2", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Rock\\rock_3.obj");
+	rock2->SetWorldTransform(XMMatrixRotationX(XMConvertToRadians(45)) * XMMatrixScaling(20.0f, 20.0f, 20.0f) * XMMatrixTranslation(310, -470, -1090));
+	sceneGraph->Add(rock2);
+
+	SceneNodePointer rock3 = make_shared<MeshNode>(L"rock3", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Rock\\rock_3.obj");
+	rock3->SetWorldTransform(XMMatrixRotationX(XMConvertToRadians(180)) * XMMatrixScaling(30.0f, 30.0f, 30.0f) * XMMatrixTranslation(285, -460, -1085));
+	sceneGraph->Add(rock3);
 
 	SceneNodePointer building = make_shared<MeshNode>(L"House", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Building\\WoodenCabinObj.obj");
-	building->SetWorldTransform(XMMatrixTranslation(0, -480, -1100));
+	building->SetWorldTransform(XMMatrixTranslation(200, -490, -1200));
 	sceneGraph->Add(building);
 
 	SceneNodePointer skyBox = make_shared<SkyNode>(L"SkyBox", _skyBoxTexture, 5000.0f);
