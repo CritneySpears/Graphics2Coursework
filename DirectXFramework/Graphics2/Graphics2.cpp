@@ -16,28 +16,27 @@ void Graphics2::CreateSceneGraph()
 	terrain->SetWorldTransform(XMMatrixTranslation(-5120, -512, -5120) * XMMatrixRotationY(XMConvertToRadians(0)));
 	sceneGraph->Add(terrain);
 
-	SceneNodePointer plane = make_shared<MeshNode>(L"Plane1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Plane\\Bonanza.3DS");
+	SceneNodePointer plane = make_shared<MeshNode>(L"Plane1", L"..\\Plane\\Bonanza.3DS");
 	plane->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), XMConvertToRadians(0.0f)) * XMMatrixRotationX(XMConvertToRadians(-30)) * XMMatrixTranslation(700.0f, -300.0f, -900.0f));
 	sceneGraph->Add(plane);
 
-	SceneNodePointer rock1 = make_shared<MeshNode>(L"rock1", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Rock\\rock_3.obj");
+	SceneNodePointer rock1 = make_shared<MeshNode>(L"rock1", L"..\\Rock\\rock_3.obj");
 	rock1->SetWorldTransform(XMMatrixScaling(15.0f, 15.0f, 15.0f) * XMMatrixTranslation(300, -470, -1100));
 	sceneGraph->Add(rock1);
 
-	SceneNodePointer rock2 = make_shared<MeshNode>(L"rock2", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Rock\\rock_3.obj");
+	SceneNodePointer rock2 = make_shared<MeshNode>(L"rock2", L"..\\Rock\\rock_3.obj");
 	rock2->SetWorldTransform(XMMatrixRotationX(XMConvertToRadians(45)) * XMMatrixScaling(20.0f, 20.0f, 20.0f) * XMMatrixTranslation(310, -470, -1090));
 	sceneGraph->Add(rock2);
 
-	SceneNodePointer rock3 = make_shared<MeshNode>(L"rock3", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Rock\\rock_3.obj");
+	SceneNodePointer rock3 = make_shared<MeshNode>(L"rock3", L"..\\Rock\\rock_3.obj");
 	rock3->SetWorldTransform(XMMatrixRotationX(XMConvertToRadians(180)) * XMMatrixScaling(30.0f, 30.0f, 30.0f) * XMMatrixTranslation(285, -460, -1085));
 	sceneGraph->Add(rock3);
 
-	SceneNodePointer building = make_shared<MeshNode>(L"House", L"\\University\\Graphics II\\Graphics2CourseWork\\DirectXFramework\\Building\\WoodenCabinObj.obj");
+	SceneNodePointer building = make_shared<MeshNode>(L"House", L"..\\Building\\WoodenCabinObj.obj");
 	building->SetWorldTransform(XMMatrixTranslation(200, -490, -1200));
 	sceneGraph->Add(building);
 
 	SceneNodePointer skyBox = make_shared<SkyNode>(L"SkyBox", _skyBoxTexture, 5000.0f);
-	//skyBox->SetWorldTransform(XMMatrixTranslationFromVector(GetCamera()->GetCameraPosition()));
 	sceneGraph->Add(skyBox);
 }
 
@@ -55,7 +54,6 @@ void Graphics2::UpdateSceneGraph()
 	_circleAngle += 0.50f;
 	XMVECTOR camPosition = GetCamera()->GetCameraPosition();
 
-	//skyBoxLocal->SetWorldTransform(XMMatrixTranslationFromVector(GetCamera()->GetCameraPosition()));
 	planeLocal->SetWorldTransform(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(90.0f), XMConvertToRadians(0.0f)) * XMMatrixRotationX(XMConvertToRadians(-30)) * XMMatrixTranslation(0.0f, 0.0f, 300.0f) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), -_circleAngle * XM_PI / 180.0f) * XMMatrixTranslation(700.0f, -300.0f, -900.0f));
 
 	// This is where controls for moving the camera are set.

@@ -1,0 +1,14 @@
+﻿  Cube.cpp
+  DirectXFramework.cpp
+  GamePadController.cpp
+  Graphics2.cpp
+  MeshNode.cpp
+  MeshRenderer.cpp
+  ResourceManager.cpp
+  SkyNode.cpp
+  TerrainNode.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1845 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Graphics2.vcxproj -> E:\University\Graphics II\Graphics2Coursework\DirectXFramework\x64\Release\Graphics2.exe
