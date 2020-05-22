@@ -109,6 +109,20 @@ void TerrainNode::GenerateGeometry()
 	{
 		for (UINT x = 0; x < _numberOfXPoints - 1; x++)
 		{
+			// Set the texture co-ordinates at each corner of the cell face.
+			_vertices.at((z    ) * _numberOfXPoints + (x    )).TexCoord = XMFLOAT2(0.0f, 1.0f); // bottom left
+			_vertices.at((z    ) * _numberOfXPoints + (x + 1)).TexCoord = XMFLOAT2(1.0f, 1.0f); // bottom right
+			_vertices.at((z + 1) * _numberOfXPoints + (x    )).TexCoord = XMFLOAT2(0.0f, 0.0f); // top left
+			_vertices.at((z + 1) * _numberOfXPoints + (x + 1)).TexCoord = XMFLOAT2(1.0f, 0.0f); // top right
+			x++;
+		}
+		z++;
+	}
+
+	for (UINT z = 0; z < _numberOfZPoints - 1; z++)
+	{
+		for (UINT x = 0; x < _numberOfXPoints - 1; x++)
+		{
 			//Calculate face normal.
 			//Add it to a vector.
 			//move to next cell.
@@ -143,15 +157,6 @@ void TerrainNode::GenerateGeometry()
 			faceNormal.y = (vector1.z * vector2.x) - (vector1.x * vector2.z);
 			faceNormal.z = (vector1.x * vector2.y) - (vector1.y * vector2.x);
 			_faceNormals.push_back(faceNormal);
-
-			// Set the texture co-ordinates at each corner of the cell face.
-
-			UINT index4 = ((z + 1) * _numberOfZPoints) + (x + 1); // top right vertex
-
-			_vertices.at(index1).TexCoord = XMFLOAT2(0.0f, 1.0f); // bottom left tex coord
-			_vertices.at(index2).TexCoord = XMFLOAT2(1.0f, 1.0f); // bottom right tex coord
-			_vertices.at(index3).TexCoord = XMFLOAT2(0.0f, 0.0f); // top left tex coord
-			_vertices.at(index4).TexCoord = XMFLOAT2(1.0f, 0.0f); // top right tex coord
 		}
 	}
 
@@ -479,41 +484,17 @@ void TerrainNode::GenerateBlendMap()
 			// between 0 and 255). The code below combines these
 			// into a DWORD (32-bit value) and stores it in the blend map.
 
-			float slope = _faceNormals[index].z;
-			int index1 = x;
-			int index2 = x + 1;
-			int index3 = x + (z * _numberOfZPoints);
-			int index4 = (x + 1) + (z * _numberOfZPoints);
-
-			float v1Height = _vertices.at(index1).Position.y;
-			float v2Height = _vertices.at(index2).Position.y;
-			float v3Height = _vertices.at(index3).Position.y;
-			float v4Height = _vertices.at(index4).Position.y;
-			float heightAverage = (v1Height + v2Height + v3Height + v4Height) / 4;
-			_avgHeights.push_back(heightAverage); // for debugging.
-
-			if (slope <= 0.0f)
-			{
-				r = 0;
-				g = 0;
-				b = 255;
-				a = 0;
-			}
-			else
-			{
-				r = 0;
-				g = 0;
-				b = 0;
-				a = 0;
-			}
+			r = 0;
+			g = 0;
+			b = 0;
+			a = 0;
 
 			DWORD mapValue = (a << 24) + (b << 16) + (g << 8) + r;
 			*blendMapPtr++ = mapValue;
 			index++;
 		}
 	}
-	float minHeight = *std::min_element(_avgHeights.begin(), _avgHeights.end()); // for debugging, finds highest and lowest points in the map.
-	float maxHeight = *std::max_element(_avgHeights.begin(), _avgHeights.end());
+
 	D3D11_TEXTURE2D_DESC blendMapDescription;
 	blendMapDescription.Width = _numberOfXPoints;
 	blendMapDescription.Height = _numberOfZPoints;

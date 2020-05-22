@@ -72,7 +72,6 @@ private:
 	std::vector<UINT>					_indices;
 	std::vector<XMFLOAT3>				_faceNormals;
 	std::vector<float>					_heightValues;
-	std::vector<float>					_avgHeights;
 
 
 	void BuildRendererStates();
